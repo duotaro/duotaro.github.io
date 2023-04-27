@@ -34,7 +34,7 @@ export default function Home({ posts }) {
                         }
                       );
                       return (
-                          <div className="col mb-5 link" key={post.id}>
+                          <div className="col mb-5" key={post.id}>
                               <div className="card h-100">
                                   <img className="card-img-top border-bottom" src={post.properties.Image.url} alt="..." />
                                   <div className="card-body p-4">
