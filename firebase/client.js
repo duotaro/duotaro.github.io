@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { getApp, getApps, initializeApp } from 'firebase/app'
+import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
@@ -14,12 +14,20 @@ const firebaseConfig = {
 
 console.log(firebaseConfig)
 
+let firebaseApp = FirebaseApp;
+
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
-const analyticsMock = {
-    logEvent: () => {},
-    setCurrentScreen: () => {},
-    setUserId: () => {},
-}
+// const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
+// const analyticsMock = {
+//     logEvent: () => {},
+//     setCurrentScreen: () => {},
+//     setUserId: () => {},
+// }
 //const analytics = isSupported() ? getAnalytics(app) : analyticsMock;
 //const analytics = isSupported().then(yes => yes ? getAnalytics(app) : analyticsMock);
+
+// サーバーサイドでレンダリングするときにエラーが起きないようにするための記述
+if (typeof window !== "undefined" && !getApps().length) {
+    firebaseApp = initializeApp(firebaseConfig);
+}
+export { firebaseApp };
