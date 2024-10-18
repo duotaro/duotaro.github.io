@@ -19,7 +19,8 @@
     "next": "13.1.6",
     "next-sitemap": "^4.0.9",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-twitter-embed": "^4.0.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
