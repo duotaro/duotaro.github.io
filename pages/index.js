@@ -41,7 +41,7 @@ export default function Home({ }) {
   return (
     <Layout>
       <Head>
-        <title>ツーソン日本語補習校 - トップ -</title>
+        <title>Techvenience -  -</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="container mx-auto">

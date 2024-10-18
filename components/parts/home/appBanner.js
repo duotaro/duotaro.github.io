@@ -42,6 +42,7 @@ const AppBanner = () => {
                     <p>&nbsp;&nbsp;&nbsp;&nbsp;name: <span className="text-yellow-300">'山内　太郎'</span>,</p>
                     <p>&nbsp;&nbsp;&nbsp;&nbsp;position: <span className="text-yellow-300">'PM && Full Stack Dev'</span>,</p>
                     <p>&nbsp;&nbsp;&nbsp;&nbsp;website: <span className="text-yellow-300">'&lt;<a target="_blank" className="text-yellow-300 hover:underline focus:border-none" href="https://techvenience.com">https://techvenience.com</a>&gt;'</span>,</p>
+					<p>&nbsp;&nbsp;&nbsp;&nbsp;stacks: <span className="text-yellow-300">'Java, Swift, AWS, SQL, Vue, React, etc.'</span></p>
                     <p>&nbsp;&nbsp;{'}'}</p>
                     <p>{'}'}</p>
                 </motion.div>
