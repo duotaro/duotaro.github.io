@@ -4,8 +4,10 @@ import { getDatabase } from "../lib/notion.js";
 import Layout from '../components/layout.js'
 export const databaseId = process.env.NEXT_PUBLIC_NOTION_DATABASE_ID;
 import { GENRE_LIST, GENRES } from "../const/index.js";
-import AdSense from '../components/ads/ad'
-import Side from '../components/parts/widget/side.js'
+import AppBanner from "../components/parts/home/appBanner.js";
+import { ProjectsProvider } from "../context/ProjectsContext.jsx";
+import ProjectsGrid from "../components/projects/ProjectsGrid.jsx";
+import Button from "../components/parts/reusable/button.js";
 
 export const Text = ({ text }) => {
   if (!text) {
@@ -36,66 +38,29 @@ export const Text = ({ text }) => {
 
 export default function Home({ }) {
   const tagList = getCategoryList(GENRE_LIST)
-
   return (
     <Layout>
       <Head>
-        <title>Techvenience - トップ -</title>
+        <title>ツーソン日本語補習校 - トップ -</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="container mt-5">
-        <div className="row">
-          <section className="col-lg-8">
-            <div className="row gx-4 gx-lg-5 row-cols-sm-2 row-cols-1 justify-content-center">
-              {tagList.map((post) => {
-                return (
-                    <div className="col mb-5" key={post.name}>
-                        <div className="card h-100">
-                            <img className="card-img-top border-bottom img-responsive" src={post.src} alt="..." />
-                            <div className="card-body p-4">
-                                <div className="text-center">
-                                    <h5 className="fw-bolder">{post.name}</h5>
-                                </div>
-                            </div>
-                            <div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div className="text-center">
-                                  <a className="btn btn-outline-dark mt-auto link" href={`/blog/${post.genre}/list`}>記事一覧</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-              })}
-            </div>
-          </section>
-          {/* Side widgets*/}
-          <section className="col-lg-4">
-            <Side />
-            {/* Categories widget*/}
-            <div className="card mb-4">
-              <div className="card-header  bg-dark text-white">
-                <i className="bi bi-tags m-1"></i>Categories
-              </div>
-              <div className="card-body">
-                  <div className="row">
-                      <div className="container">
-                          <div className="row">
-                            {tagList.map((tag) => {
-                              return (
-                                <div className="col-3" style={{width:'fit-content'}} key={tag.name}>
-                                  <a href={tag.url} className="col  btn btn-outline-secondary m-1"  key={tag.name}>
-                                    #{tag.name}
-                                  </a>
-                                </div>
-                              )
-                            })}
-                          </div>
-                      </div>
-                  </div>
-              </div>
-            </div>
-          </section>
-        </div>{/* .row */}
+      <div className="container mx-auto">
+         <AppBanner />
+
+         <ProjectsProvider tagList={tagList}>
+				   <ProjectsGrid></ProjectsGrid>
+			   </ProjectsProvider>
+
+         <div className="mt-8 sm:mt-10 flex justify-center">
+            <Link
+              href={`/projects`}
+              className="font-general-medium flex items-center px-6 py-3 rounded-lg shadow-lg hover:shadow-xl bg-indigo-500 hover:bg-indigo-600 focus:ring-1 focus:ring-indigo-900 text-white text-lg sm:text-xl duration-300"
+              aria-label="More Projects"
+            >
+              <Button title="More Projects" />
+            </Link>
+          </div>
+        
       </div>{/* .container */}
     </Layout>
   );
