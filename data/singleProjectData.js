@@ -1,18 +1,8 @@
-// Import images
-import Image1 from '../images/ui-project-1.jpg';
-import Image2 from '../images/web-project-2.jpg';
-import Image3 from '../images/mobile-project-2.jpg';
-import Image4 from '../images/mobile-project-1.jpg';
-import Image5 from '../images/web-project-1.jpg';
-import Image6 from '../images/ui-project-2.jpg';
-// Import icons
-import {
-	FiFacebook,
-	FiInstagram,
-	FiLinkedin,
-	FiTwitter,
-	FiYoutube,
-} from 'react-icons/fi';
+import GithubIcon from "../components/icons/github";
+import XIcon from "../components/icons/x";
+import GoogleIcon from "../components/icons/google";
+import InstagramIcon from "../components/icons/instagram";
+
 
 export const singleProjectData = {
 	ProjectHeader: {
@@ -24,17 +14,17 @@ export const singleProjectData = {
 		{
 			id: 1,
 			title: 'Kabul Project Management UI',
-			img: Image1,
+			img: `/images/ui-project-1.jpg`,
 		},
 		{
 			id: 2,
 			title: 'Kabul Project Management UI',
-			img: Image2,
+			img: `/images/web-project-2.jpg`,
 		},
 		{
 			id: 3,
 			title: 'Kabul Project Management UI',
-			img: Image3,
+			img: `/images/mobile-project-2.jpg`,
 		},
 	],
 	ProjectInfo: {
@@ -101,38 +91,32 @@ export const singleProjectData = {
 			},
 		],
 		SocialSharingHeading: 'Share This',
-		SocialSharing: [
-			{
-				id: 1,
-				name: 'Twitter',
-				icon: <FiTwitter />,
-				url: 'https://twitter.com/realstoman',
-			},
-			{
-				id: 2,
-				name: 'Instagram',
-				icon: <FiInstagram />,
-				url: 'https://instagram.com/realstoman',
-			},
-			{
-				id: 3,
-				name: 'Facebook',
-				icon: <FiFacebook />,
-				url: 'https://facebook.com/',
-			},
-			{
-				id: 4,
-				name: 'LinkedIn',
-				icon: <FiLinkedin />,
-				url: 'https://linkedin.com/',
-			},
-			{
-				id: 5,
-				name: 'Youtube',
-				icon: <FiYoutube />,
-				url: 'https://www.youtube.com/c/StomanStudio',
-			},
-		],
+		// SocialSharing: [
+		// 	{
+		// 		id: 1,
+		// 		name: 'Twitter',
+		// 		icon: <XIcon />,
+		// 		url: 'https://twitter.com/realstoman',
+		// 	},
+		// 	{
+		// 		id: 2,
+		// 		name: 'Github',
+		// 		icon: <GithubIcon />,
+		// 		url: 'https://github.io/duotaro',
+		// 	},
+		// 	{
+		// 		id: 3,
+		// 		name: 'Google',
+		// 		icon: <GoogleIcon />,
+		// 		url: 'https://google.com/',
+		// 	},
+		// 	{
+		// 		id: 4,
+		// 		name: 'Instagram',
+		// 		icon: <InstagramIcon />,
+		// 		url: 'https://linkedin.com/',
+		// 	}
+		// ],
 	},
 	RelatedProject: {
 		title: 'Related Projects',
@@ -140,22 +124,22 @@ export const singleProjectData = {
 			{
 				id: 1,
 				title: 'Mobile UI',
-				img: Image4,
+				img: `/images/mobile-project-1.jpg`,
 			},
 			{
 				id: 2,
 				title: 'Web Application',
-				img: Image5,
+				img: `/images/web-project-1.jpg`,
 			},
 			{
 				id: 3,
 				title: 'UI Design',
-				img: Image6,
+				img: `/images/ui-project-2.jpg`,
 			},
 			{
 				id: 4,
 				title: 'Kabul Mobile App UI',
-				img: Image3,
+				img: `/images/mobile-project-2.jpg`,
 			},
 		],
 	},

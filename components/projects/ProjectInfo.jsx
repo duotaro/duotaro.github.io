@@ -5,8 +5,8 @@ const ProjectInfo = () => {
 	const { singleProjectData } = useContext(SingleProjectContext);
 
 	return (
-		<div className="block sm:flex gap-0 sm:gap-10 mt-14">
-			<div className="w-full sm:w-1/3 text-left">
+		<div className="block md:flex gap-0 md:gap-10 mt-14">
+			<div className="w-full md:w-1/3 text-left">
 				{/* Single project client details */}
 				<div className="mb-7">
 					<p className="font-general-regular text-2xl font-semibold text-secondary-dark dark:text-secondary-light mb-2">
@@ -63,7 +63,7 @@ const ProjectInfo = () => {
 				</div>
 
 				{/* Single project social sharing */}
-				<div>
+				{/* <div>
 					<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
 						{singleProjectData.ProjectInfo.SocialSharingHeading}
 					</p>
@@ -86,11 +86,11 @@ const ProjectInfo = () => {
 							}
 						)}
 					</div>
-				</div>
+				</div> */}
 			</div>
 
 			{/*  Single project right section */}
-			<div className="w-full sm:w-2/3 text-left mt-10 sm:mt-0">
+			<div className="w-full md:w-2/3 text-left mt-10 md:mt-0">
 				<p className="font-general-regular text-primary-dark dark:text-primary-light text-2xl font-bold mb-7">
 					{singleProjectData.ProjectInfo.ProjectDetailsHeading}
 				</p>

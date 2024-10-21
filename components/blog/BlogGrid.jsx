@@ -1,29 +1,29 @@
 import { useContext } from 'react';
-import ProjectSingle from './ProjectSingle';
-import { ProjectsContext } from '../../context/ProjectsContext';
-import ProjectsFilter from './ProjectsFilter';
+import BlogSingle from './BlogSingle';
+import { BlogContext } from '../../context/BlogContext';
+import BlogFilter from './BlogFilter';
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid';
 
-const ProjectsGrid = () => {
+const BlogGrid = () => {
 	const {
-		projects,
-		searchProject,
-		setSearchProject,
-		searchProjectsByTitle,
-		selectProject,
-		setSelectProject,
-		selectProjectsByCategory,
-	} = useContext(ProjectsContext);
+		blog,
+		searchBlog,
+		setSearchBlog,
+		searchBlogByTitle,
+		selectBlog,
+		setSelectBlog,
+		selectBlogByCategory,
+	} = useContext(BlogContext);
 
 
-	console.log("-----console.log(projects)----")
-	console.log(projects)
+	console.log("-----console.log(blogs)----")
+	console.log(blog)
 
 	return (
 		<section className="py-5  mt-5">
 			<div className="text-center">
 				<p className="font-general-medium text-2xl sm:text-4xl mb-1 text-ternary-dark dark:text-ternary-light">
-					Projects portfolio
+					Blog
 				</p>
 			</div>
 
@@ -55,7 +55,7 @@ const ProjectsGrid = () => {
 						</span>
 						<input
 							onChange={(e) => {
-								setSearchProject(e.target.value);
+								setSearchBlog(e.target.value);
 							}}
 							className="font-general-medium 
                                 pl-3
@@ -77,40 +77,40 @@ const ProjectsGrid = () => {
 							name="name"
 							type="search"
 							required=""
-							placeholder="Search Projects"
+							placeholder="Search Blog"
 							aria-label="Name"
 						/>
 					</div>
 
-					<ProjectsFilter setSelectProject={setSelectProject} />
+					<BlogFilter setSelectBlog={setSelectBlog} />
 				</div>
 			</div>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 sm:gap-10">
-				{selectProject
-					? selectProjectsByCategory.map((project) => (
-							<ProjectSingle
-								title={project.name}
-								genre={project.genre}
-								src={project.src}
-								key={project.id}
+				{selectBlog
+					? selectBlogByCategory.map((blog) => (
+							<BlogSingle
+								title={blog.name}
+								genre={blog.genre}
+								src={blog.src}
+								key={blog.id}
 							/>
 					  ))
-					: searchProject
-					? searchProjectsByTitle.map((project) => (
-							<ProjectSingle
-								title={project.name}
-								genre={project.genre}
-								src={project.src}
-								key={project.id}
+					: searchBlog
+					? searchBlogByTitle.map((blog) => (
+							<BlogSingle
+								title={blog.name}
+								genre={blog.genre}
+								src={blog.src}
+								key={blog.id}
 							/>
 					  ))
-					: projects.map((project) => (
-							<ProjectSingle
-								title={project.name}
-								genre={project.genre}
-								src={project.src}
-								key={project.id}
+					: blog.map((blog) => (
+							<BlogSingle
+								title={blog.name}
+								genre={blog.genre}
+								src={blog.src}
+								key={blog.id}
 							/>
 					  ))}
 			</div>
@@ -118,4 +118,4 @@ const ProjectsGrid = () => {
 	);
 };
 
-export default ProjectsGrid;
+export default BlogGrid;

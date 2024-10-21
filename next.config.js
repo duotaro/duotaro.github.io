@@ -6,19 +6,5 @@ module.exports = {
   trailingSlash: true,
   images: {
     domains: ['cdn-ak.f.st-hatena.com'], // ここにホスト名を追加
-  },
-  async redirects() {
-    return [
-      {
-        source: '/blog/:categories',
-        destination: '/blog/:categories/list',
-        permanent: true,
-      },
-      {
-        source: '/blog/',
-        destination: '/',
-        permanent: true,
-      },
-    ]
-  },
+  }
 };

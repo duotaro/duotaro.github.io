@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 
-const ProjectSingle = ({ title, genre, src }) => {
+const BlogSingle = ({ title, genre, src }) => {
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}
@@ -14,7 +14,7 @@ const ProjectSingle = ({ title, genre, src }) => {
 				delay: 0.15,
 			}}
 		>
-			<Link href="/projects/detail/" aria-label="Single Project">
+			<Link href="/blog/detail/" aria-label="Single Blog">
 				<div className="rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark">
 					<div className='relative h-[200px]'>
 						<Image
@@ -28,9 +28,9 @@ const ProjectSingle = ({ title, genre, src }) => {
 						/>
 					</div>
 					<div className="text-center px-4 py-6">
-						<h3 className="font-general-medium text-md md:text-xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
+						<p className="font-general-medium text-lg md:text-xl text-ternary-dark dark:text-ternary-light mb-2">
 							{title}
-						</h3>
+						</p>
 						<span className="text-lg text-ternary-dark dark:text-ternary-light">
 							{genre}
 						</span>
@@ -41,4 +41,4 @@ const ProjectSingle = ({ title, genre, src }) => {
 	);
 };
 
-export default ProjectSingle;
+export default BlogSingle;

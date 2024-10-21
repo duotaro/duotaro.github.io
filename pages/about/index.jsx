@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import Layout from '../../components/layout';
-import {AboutMeProvider} from "../../context/AboutMeContext"
+import { AboutMeProvider } from "../../context/AboutMeContext"
 import AboutMeBio from "../../components/parts/about/AboutMeBio"
 import AboutCounter from "../../components/parts/about/AboutCounter"
-import AboutClients from "../../components/parts/about/AboutClients"
+import AboutStacks from "../../components/parts/about/AboutStacks"
 
 const About = () => {
 	return (
@@ -33,7 +33,7 @@ const About = () => {
 					exit={{ opacity: 0 }}
 					className="container mx-auto"
 				>
-					<AboutClients />
+					<AboutStacks />
 				</motion.div>
 			</AboutMeProvider>
 		</Layout>
