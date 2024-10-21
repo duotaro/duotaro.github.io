@@ -1,5 +1,5 @@
-import Button from '../reusable/Button';
-import FormInput from '../reusable/FormInput';
+import Button from '../reusable/button';
+import FormInput from '../reusable/formInput';
 
 const ContactForm = () => {
 	return (
