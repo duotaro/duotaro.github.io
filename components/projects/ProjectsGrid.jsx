@@ -21,11 +21,11 @@ const ProjectsGrid = () => {
 
 	return (
 		<section className="py-5  mt-5">
-			<div className="text-center">
+			{/* <div className="text-center">
 				<p className="font-general-medium text-2xl sm:text-4xl mb-1 text-ternary-dark dark:text-ternary-light">
 					Projects portfolio
 				</p>
-			</div>
+			</div> */}
 
 			<div className="mt-5 sm:mt-16">
 				<div
