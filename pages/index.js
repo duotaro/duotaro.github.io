@@ -168,7 +168,6 @@ export default function Home() {
       <div className="mt-6 p-4 bg-white rounded-xl shadow">
         <h2 className="text-xl font-bold mb-2">📤 SNS用テキスト</h2>
         <textarea
-          readOnly
           value={shareText}
           className="w-full p-2 border rounded h-32 text-sm"
         />
