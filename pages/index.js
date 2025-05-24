@@ -7,7 +7,7 @@ const TASKS = [
     id: "orderflow-study", 
     category: "investment",
     categoryLabel: "🪙 投資",
-    label: "Orderflowトレード学習", 
+    label: "OFトレード学習", 
     points: 3,
     days: [1, 2, 3, 4, 5], // 平日毎日
     time: "10:00"
@@ -16,7 +16,7 @@ const TASKS = [
     id: "defi-review", 
     category: "investment",
     categoryLabel: "🪙 投資",
-    label: "DeFi運用の見直し", 
+    label: "DeFi運用見直し", 
     points: 2,
     days: [1], // 月曜
     time: "11:00"
@@ -26,7 +26,7 @@ const TASKS = [
     id: "note-writing", 
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
-    label: "Orderflow学習内容をnoteにまとめる", 
+    label: "OF学習noteまとめ", 
     points: 3,
     days: [1], // 月曜
     time: "12:00"
@@ -35,7 +35,7 @@ const TASKS = [
     id: "sns-post", 
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
-    label: "note要点をSNSに投稿して誘導", 
+    label: "note要点をSNSに投稿", 
     points: 2,
     days: [2, 4], // 火曜・木曜
     time: "Orderflow学習後"
@@ -44,8 +44,8 @@ const TASKS = [
   { 
     id: "future-tech-study", 
     category: "learning",
-    categoryLabel: "🧠 学習（未来技術・bot開発）",
-    label: "未来技術・botに関する学習", 
+    categoryLabel: "🧠 学習（先端技術）",
+    label: "先端技術に関する学習", 
     points: 2,
     days: [2, 4], // 火曜・木曜
     time: "11:00"
@@ -55,7 +55,7 @@ const TASKS = [
     id: "pomodoro-exercise", 
     category: "training",
     categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "ポモドーロ休憩中の筋トレ・ストレッチ", 
+    label: "筋トレ・ストレッチ", 
     points: 2,
     days: [1, 2, 3, 4, 5], // 平日毎日
     time: "各25分作業後の5分休憩中"
@@ -73,7 +73,7 @@ const TASKS = [
     id: "weight-record", 
     category: "training",
     categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "体重・体脂肪率の記録", 
+    label: "体重記録", 
     points: 1,
     days: [0, 1, 2, 3, 4, 5, 6], // 毎日
     time: "入浴後"
@@ -241,7 +241,7 @@ export default function Home() {
     
     shareText += `🎯 今日の合計：${todayPoints}pt\n`;
     shareText += `📈 累計ポイント：${totalPoints}pt\n`;
-    shareText += `🪙${rewardSetting}✨\n`;
+   // shareText += `🪙${rewardSetting}✨\n`;
     shareText += `#日々コツコツ #習慣化`;
     
     return shareText;
