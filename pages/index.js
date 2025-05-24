@@ -242,7 +242,7 @@ export default function Home() {
     shareText += `🎯 今日の合計：${todayPoints}pt\n`;
     shareText += `📈 累計ポイント：${totalPoints}pt\n`;
     shareText += `🪙${rewardSetting}✨\n`;
-    shareText += `#自分強化 #習慣化 #未来逆算`;
+    shareText += `#日々コツコツ #習慣化`;
     
     return shareText;
   };
