@@ -55,10 +55,19 @@ const TASKS = [
     id: "pomodoro-exercise", 
     category: "training",
     categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "筋トレ・ストレッチ", 
+    label: "筋トレ・ストレッチ(ポモドーロ)", 
     points: 2,
     days: [1, 2, 3, 4, 5], // 平日毎日
     time: "各25分作業後の5分休憩中"
+  },
+  { 
+    id: "night-exercise", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "筋トレ・ストレッチ(夜)", 
+    points: 2,
+    days: [1, 2, 3, 4, 5, 6, 7], // 毎日
+    time: "子供が寝たらすぐ"
   },
   { 
     id: "meal-record", 
