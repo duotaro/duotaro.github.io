@@ -8,7 +8,7 @@ const TASKS = [
     category: "investment",
     categoryLabel: "🪙 投資",
     label: "OFトレード学習", 
-    points: 3,
+    points: 5,
     days: [1, 2, 3, 4, 5], // 平日毎日
     time: "10:00"
   },
@@ -27,7 +27,7 @@ const TASKS = [
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
     label: "OF学習noteまとめ", 
-    points: 3,
+    points: 4,
     days: [1], // 月曜
     time: "12:00"
   },
@@ -36,7 +36,7 @@ const TASKS = [
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
     label: "note要点をSNSに投稿", 
-    points: 2,
+    points: 3,
     days: [2, 4], // 火曜・木曜
     time: "Orderflow学習後"
   },
@@ -46,7 +46,7 @@ const TASKS = [
     category: "learning",
     categoryLabel: "🧠 学習（先端技術）",
     label: "先端技術に関する学習", 
-    points: 2,
+    points: 5,
     days: [2, 4], // 火曜・木曜
     time: "11:00"
   },
@@ -86,6 +86,33 @@ const TASKS = [
     points: 1,
     days: [0, 1, 2, 3, 4, 5, 6], // 毎日
     time: "入浴後"
+  },
+  { 
+    id: "daily-reflection", 
+    category: "reflection",
+    categoryLabel: "📝 振り返り",
+    label: "日次レビュー", 
+    points: 1,
+    days: [0, 1, 2, 3, 4, 5, 6], // 毎日
+    time: "就寝前"
+  },
+  { 
+    id: "weekly-reflection", 
+    category: "reflection",
+    categoryLabel: "📝 振り返り",
+    label: "週次レビュー", 
+    points: 5,
+    days: [6], // 日曜日
+    time: "就寝前"
+  },
+  { 
+    id: "monthly-reflection", 
+    category: "reflection",
+    categoryLabel: "📝 振り返り",
+    label: "月次レビュー", 
+    points: 10,
+    days: [6], // 日曜日
+    time: "就寝前"
   }
 ];
 
@@ -93,7 +120,18 @@ const CATEGORY_COLORS = {
   investment: "from-yellow-400 to-orange-500",
   content: "from-purple-400 to-pink-500",
   learning: "from-blue-400 to-cyan-500",
-  training: "from-green-400 to-emerald-500"
+  training: "from-green-400 to-emerald-500",
+  reflection: "from-indigo-400 to-violet-500",
+  visualization: "from-teal-400 to-sky-500",
+  selftalk: "from-rose-400 to-red-500",
+  // 以下未使用のためkeyを更新して使うこと
+  mindfulness: "from-amber-400 to-yellow-500",
+  planning: "from-slate-400 to-gray-500",
+  motivation: "from-fuchsia-400 to-purple-500",
+  analysis: "from-cyan-400 to-blue-500",
+  wellness: "from-lime-400 to-green-500",
+  creativity: "from-pink-400 to-rose-500",
+  productivity: "from-emerald-400 to-teal-500"
 };
 
 export default function Home() {
@@ -101,7 +139,7 @@ export default function Home() {
   const [todayDone, setTodayDone] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [startDate, setStartDate] = useState(null);
-  const [rewardSetting, setRewardSetting] = useState("100ptでラーメンを食べて良いこととする");
+  const [rewardSetting, setRewardSetting] = useState("100ptでラーメンを食べてOK");
   const [isEditingReward, setIsEditingReward] = useState(false);
   const [tempRewardText, setTempRewardText] = useState("");
   const [showAddTask, setShowAddTask] = useState(false);
