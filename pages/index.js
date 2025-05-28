@@ -527,6 +527,15 @@ export default function Home() {
             className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
             readOnly
           />
+          <button
+            className="mt-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full hover:opacity-80"
+            onClick={() => {
+              navigator.clipboard.writeText(shareText);
+              alert("SNS用テキストをコピーしました！");
+            }}
+          >
+            📋 コピーして投稿する
+          </button>
         </div>
       </div>
     </div>
