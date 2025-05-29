@@ -10,16 +10,16 @@ const TASKS = [
     label: "OFトレード学習", 
     points: 5,
     days: [1, 2, 3, 4, 5], // 平日毎日
-    time: "10:00"
+    time: "13時から"
   },
   { 
     id: "defi-review", 
     category: "investment",
     categoryLabel: "🪙 投資",
     label: "DeFi運用見直し", 
-    points: 2,
+    points: 5,
     days: [1], // 月曜
-    time: "11:00"
+    time: "OFトレード学習後"
   },
   // コンテンツ作成
   { 
@@ -27,9 +27,9 @@ const TASKS = [
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
     label: "OF学習noteまとめ", 
-    points: 4,
+    points: 5,
     days: [1], // 月曜
-    time: "12:00"
+    time: "DeFi運用見直し後"
   },
   { 
     id: "sns-post", 
@@ -48,7 +48,7 @@ const TASKS = [
     label: "先端技術に関する学習", 
     points: 5,
     days: [2, 4], // 火曜・木曜
-    time: "11:00"
+    time: "SNSに投稿後"
   },
   // トレーニング
   { 
@@ -210,11 +210,19 @@ const DEFAULT_SELF_TALK = [
   "毎日が新しい可能性に満ちている",
   "理想の自分に近づいている",
   "チャレンジすることで強くなる",
-  "今日できることに集中しよう"
+  "今日できることに集中しよう",
+  "今は仕事じゃなくて、長期の自分に投資してる時間だ",
+  "これは未来の自分を助ける重要な時間だ",
+  "やることはあるけど、順番を決めるのは自分の自由だ"
 ];
 
+const REVIEW_TEXT = `・続いたこと
+・サボった理由
+・修正ポイント
+・翌週にやりたい改善`
+
 export default function Home() {
-  const [currentView, setCurrentView] = useState("tasks"); // tasks, goals, selftalk
+  const [currentView, setCurrentView] = useState("tasks"); // tasks, goals, selftalk, templates
   const [points, setPoints] = useState({});
   const [todayDone, setTodayDone] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -449,19 +457,19 @@ export default function Home() {
   // SNS用テキスト生成
   const generateShareText = () => {
     const completedTasksText = completedTodayTasks.map(task => 
-      `✅ ${task.label}（+${task.points}pt）`
+      `✅ ${task.label}`//（+${task.points}pt）`
     );
     
-    let shareText = `#習慣ログ Day${dayCount}\n`;
+    let shareText = `Day${dayCount}\n`;
     
     if (completedTasksText.length > 0) {
       shareText += completedTasksText.join('\n') + '\n';
     }
     
-    shareText += `🎯 今日の合計：${todayPoints}pt\n`;
+    //shareText += `🎯 今日の合計：${todayPoints}pt\n`;
     shareText += `📈 累計ポイント：${totalPoints}pt\n`;
     shareText += `💪 "${currentSelfTalk}"\n`;
-    shareText += `#日々コツコツ #習慣化 #目標達成`;
+    shareText += `#日々コツコツ #習慣化 #目標達成 #習慣ログ `;
     
     return shareText;
   };
@@ -554,7 +562,8 @@ export default function Home() {
           {[
             { key: "tasks", label: "📋 タスク", icon: "📋" },
             { key: "goals", label: "🎯 目標", icon: "🎯" },
-            { key: "selftalk", label: "💪 マインド", icon: "💪" }
+            { key: "selftalk", label: "💪 マインド", icon: "💪" },
+            { key: "templates", label: "📝 メモ", icon: "📝"}
           ].map(({ key, label, icon }) => (
             <button
               key={key}
@@ -965,6 +974,25 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* テンプレート */}
+        {currentView === "templates" && (
+          <div className="space-y-6">
+ 
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
+              <h2 className="text-white font-semibold mb-3 flex items-center">
+                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2"></div>
+                レビュー用テキスト
+              </h2>
+              <textarea
+                value={REVIEW_TEXT}
+                className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+                readOnly
+              />
+            </div>
+          </div>
+        )}
+
 
         {/* 目標追加/編集フォーム */}
         {(showGoalForm || editingGoal) && (
