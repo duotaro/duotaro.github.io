@@ -87,6 +87,17 @@ const TASKS = [
     days: [0, 1, 2, 3, 4, 5, 6], // 毎日
     time: "入浴後"
   },
+  // 瞑想
+  { 
+    id: "mindfulness", 
+    category: "mindfulness",
+    categoryLabel: "👁️ マインドフルネス",
+    label: "瞑想", 
+    points: 3,
+    days: [0, 1, 2, 3, 4, 5, 6], // 毎日
+    time: "寝る前"
+  },
+  // レビュー
   { 
     id: "daily-reflection", 
     category: "reflection",
