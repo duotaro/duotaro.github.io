@@ -202,9 +202,9 @@ const DEFAULT_GOALS = [
     category: "training",
     progress: 0,
     milestones: [
-      { title: "体重目標達成", target: 40, completed: false },
-      { title: "筋力目標達成", target: 70, completed: false },
-      { title: "習慣の定着", target: 90, completed: false },
+      { title: "体重64kg達成", target: 40, completed: false },
+      { title: "習慣の定着", target: 70, completed: false },
+      { title: "体脂肪率15%達成", target: 90, completed: false },
       { title: "理想体型の維持", target: 100, completed: false }
     ]
   }
@@ -256,7 +256,9 @@ export default function Home() {
 
   // 今日の日付と曜日を取得
   const getTodayString = () => {
-    return new Date().toLocaleDateString('ja-JP', {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1); 
+    return yesterday.toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
@@ -264,7 +266,9 @@ export default function Home() {
   };
 
   const getTodayDayOfWeek = () => {
-    return new Date().getDay();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1); // 日付を1日前に設定
+    return yesterday.getDay();
   };
 
   // 今日やるべきタスクを取得
