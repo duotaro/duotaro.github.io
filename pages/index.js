@@ -256,9 +256,7 @@ export default function Home() {
 
   // 今日の日付と曜日を取得
   const getTodayString = () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1); 
-    return yesterday.toLocaleDateString('ja-JP', {
+    return new Date().toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
@@ -266,9 +264,7 @@ export default function Home() {
   };
 
   const getTodayDayOfWeek = () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1); // 日付を1日前に設定
-    return yesterday.getDay();
+    return new Date().getDay();
   };
 
   // 今日やるべきタスクを取得
