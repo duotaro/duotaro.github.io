@@ -175,23 +175,27 @@ const DEFAULT_GOALS = [
     progress: 0,
     milestones: [
       { title: "月10万円達成", target: 25, completed: false },
-      { title: "月30万円達成", target: 50, completed: false },
-      { title: "月50万円達成", target: 75, completed: false },
-      { title: "月100万円達成", target: 100, completed: false }
+      { title: "月30万円達成", target: 40, completed: false },
+      { title: "月50万円達成", target: 60, completed: false },
+      { title: "月80万円達成", target: 80, completed: false },
+      { title: "月100万円達成", target: 90, completed: false },
+      { title: "月150万円達成", target: 100, completed: false }
     ]
   },
   {
-    id: "expertise-building",
-    title: "専門性の確立",
-    description: "先端技術とトレーディングの専門家として認知される",
-    targetDate: "2025-12-31",
-    category: "learning",
-    progress: 0,
-    milestones: [
-      { title: "基礎知識習得", target: 30, completed: false },
-      { title: "実践経験積み重ね", target: 60, completed: false },
-      { title: "成果発信開始", target: 80, completed: false },
-      { title: "専門家として認知", target: 100, completed: false }
+    "id": "social-standing",
+    "title": "影響力の確立",
+    "description": "SNSで計40万人フォロワーを達成し、経済的成功と社会貢献の基盤を築く",
+    "targetDate": "2026-12-31",
+    "category": "social",
+    "progress": 0,
+    "milestones": [
+      { "title": "SNSアカウントの設計・整備（プロフィール設計・投稿ジャンル決定）", "target": 10, "completed": false },
+      { "title": "投稿習慣の確立（毎週5〜7投稿を3ヶ月継続）", "target": 25, "completed": false },
+      { "title": "動画と文章SNSの住み分けとコンテンツ確立", "target": 70, "completed": false },
+      { "title": "SNS総フォロワー40万人達成（各媒体の合計）", "target": 80, "completed": false },
+      { "title": "毎月10万円以上の寄付を継続して行う", "target": 90, "completed": false },
+      { "title": "年間500万円以上の寄付を継続して行う", "target": 100, "completed": false },
     ]
   },
   {
@@ -202,8 +206,10 @@ const DEFAULT_GOALS = [
     category: "training",
     progress: 0,
     milestones: [
+      { title: "習慣の定着", target: 25, completed: false },
       { title: "体重64kg達成", target: 40, completed: false },
-      { title: "習慣の定着", target: 70, completed: false },
+      { title: "体脂肪率20%達成", target: 60, completed: false },
+      { title: "体脂肪率17%達成", target: 80, completed: false },
       { title: "体脂肪率15%達成", target: 90, completed: false },
       { title: "理想体型の維持", target: 100, completed: false }
     ]
