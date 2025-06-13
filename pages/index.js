@@ -1011,6 +1011,28 @@ export default function Home() {
                 readOnly
               />
             </div>
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
+              <h2 className="text-white font-semibold mb-3 flex items-center">
+                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2"></div>
+                ビジュアライゼーション（成果イメージ）
+              </h2>
+              <textarea
+                value="「私はもうすでに経済的自由を手にしている。月150万円以上の不労所得が安定して入り、家族と笑顔で過ごす日常に心から感謝している。SNSでは多くの人に影響を与え、『ありがとう』『あなたのおかげで人生が変わった』と言われるたびに胸が熱くなり、誇りを感じる。朝のウッドデッキで伸びをしたときに感じる太陽の暖かさとともに、私は確かな自由と充実感を味わっている。この生き方を選んだことに、心の底から満足している。」"
+                className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+                readOnly
+              />
+            </div>
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
+              <h2 className="text-white font-semibold mb-3 flex items-center">
+                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2"></div>
+                ビジュアライゼーション（プロセスイメージ）
+              </h2>
+              <textarea
+                value="「私は毎朝、わくわくした気持ちで今日のやるべきことに取り組む。新しい知識に触れるたびに好奇心が刺激され、SNSで自分の考えを発信するたびに小さな達成感が湧く。失敗しても、『これも自分を成長させる経験だ』と笑い飛ばす余裕がある。この積み重ねの先に待っている理想の未来を思うと、自然と力が湧いてくる。」"
+                className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+                readOnly
+              />
+            </div>
           </div>
         )}
 
