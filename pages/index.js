@@ -167,51 +167,52 @@ const CATEGORY_COLORS = {
 // デフォルト目標設定
 const DEFAULT_GOALS = [
   {
-    id: "financial-freedom",
-    title: "経済的自由の達成",
-    description: "投資とコンテンツ収益で月100万円の不労所得を得る",
-    targetDate: "2026-12-31",
-    category: "investment",
-    progress: 0,
-    milestones: [
-      { title: "月10万円達成", target: 25, completed: false },
-      { title: "月30万円達成", target: 40, completed: false },
-      { title: "月50万円達成", target: 60, completed: false },
-      { title: "月80万円達成", target: 80, completed: false },
-      { title: "月100万円達成", target: 90, completed: false },
-      { title: "月150万円達成", target: 100, completed: false }
+    "id": "financial-freedom",
+    "title": "経済的自由の達成",
+    "description": "投資とコンテンツ収益で月150万円の不労所得を得る",
+    "targetDate": "2030-06-30",
+    "category": "investment",
+    "progress": 0,
+    "milestones": [
+      { "title": "投資額500万円構築(2026年12月)", "target": 10, "completed": false },
+      { "title": "月5万円の不労所得発生(2027年6月)", "target": 20, "completed": false },
+      { "title": "月20万円の不労所得発生(2028年6月)", "target": 40, "completed": false },
+      { "title": "月60万円の不労所得発生(2029年6月)", "target": 60, "completed": false },
+      { "title": "月100万円の不労所得発生(2030年1月)", "target": 80, "completed": false },
+      { "title": "月150万円安定達成(2030年6月)", "target": 100, "completed": false }
     ]
   },
   {
-    "id": "social-standing",
+    "id": "social-influence",
     "title": "影響力の確立",
     "description": "SNSで計40万人フォロワーを達成し、経済的成功と社会貢献の基盤を築く",
-    "targetDate": "2026-12-31",
+    "targetDate": "2028-12-31",
     "category": "social",
     "progress": 0,
     "milestones": [
-      { "title": "SNSアカウントの設計・整備（プロフィール設計・投稿ジャンル決定）", "target": 10, "completed": false },
-      { "title": "投稿習慣の確立（毎週5〜7投稿を3ヶ月継続）", "target": 25, "completed": false },
-      { "title": "動画と文章SNSの住み分けとコンテンツ確立", "target": 70, "completed": false },
-      { "title": "SNS総フォロワー40万人達成（各媒体の合計）", "target": 80, "completed": false },
-      { "title": "毎月10万円以上の寄付を継続して行う", "target": 90, "completed": false },
-      { "title": "年間500万円以上の寄付を継続して行う", "target": 100, "completed": false },
+      { "title": "SNS運用設計・毎日発信習慣化(2025年9月)", "target": 5, "completed": false },
+      { "title": "フォロワー計1万人達成(2025年12月)", "target": 10, "completed": false },
+      { "title": "計5万人達成(2026年6月)", "target": 25, "completed": false },
+      { "title": "計10万人達成(2026年12月)", "target": 40, "completed": false },
+      { "title": "計20万人達成(2027年12月)", "target": 60, "completed": false },
+      { "title": "計30万人達成(2028年6月)", "target": 80, "completed": false },
+      { "title": "計40万人達成(2028年12月)", "target": 100, "completed": false }
     ]
   },
   {
     id: "health-optimization",
     title: "最適な身体作り",
     description: "理想的な体型と健康状態を維持し続ける",
-    targetDate: "2025-06-30",
+    targetDate: "2025-12-31",
     category: "training",
     progress: 0,
     milestones: [
-      { title: "習慣の定着", target: 25, completed: false },
-      { title: "体重64kg達成", target: 40, completed: false },
-      { title: "体脂肪率20%達成", target: 60, completed: false },
-      { title: "体脂肪率17%達成", target: 80, completed: false },
-      { title: "体脂肪率15%達成", target: 90, completed: false },
-      { title: "理想体型の維持", target: 100, completed: false }
+      { title: "習慣の定着(2025年6月)", target: 25, completed: false },
+      { title: "体重64kg達成(2025年8月)", target: 40, completed: false },
+      { title: "体脂肪率20%達成(2025年9月)", target: 60, completed: false },
+      { title: "体脂肪率17%達成(2025年10月)", target: 80, completed: false },
+      { title: "体脂肪率15%達成(2025年11月)", target: 90, completed: false },
+      { title: "理想体型の維持(2025年12月)", target: 100, completed: false }
     ]
   }
 ];
