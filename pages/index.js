@@ -165,6 +165,7 @@ const CATEGORY_COLORS = {
 };
 
 // デフォルト目標設定
+// デフォルト目標設定
 const DEFAULT_GOALS = [
   {
     "id": "financial-freedom",
@@ -180,7 +181,17 @@ const DEFAULT_GOALS = [
       { "title": "月60万円の不労所得発生(2029年6月)", "target": 60, "completed": false },
       { "title": "月100万円の不労所得発生(2030年1月)", "target": 80, "completed": false },
       { "title": "月150万円安定達成(2030年6月)", "target": 100, "completed": false }
-    ]
+    ],
+    "okr": {
+      "objective": "",
+      "keyResults": ""
+    },
+    "woop": {
+      "wish": "",
+      "outcome": "",
+      "obstacle": "",
+      "plan": ""
+    }
   },
   {
     "id": "social-influence",
@@ -197,23 +208,43 @@ const DEFAULT_GOALS = [
       { "title": "計20万人達成(2027年12月)", "target": 60, "completed": false },
       { "title": "計30万人達成(2028年6月)", "target": 80, "completed": false },
       { "title": "計40万人達成(2028年12月)", "target": 100, "completed": false }
-    ]
+    ],
+    "okr": {
+      "objective": "SNS運用を戦略的に設計し、毎日発信を無理なく継続できる状態をつくる",
+      "keyResults": "・SNSアカウントのコンセプト・ジャンル・ターゲットを明確にする\n・発信計画（投稿頻度・曜日・時間帯・ネタ帳）を作成\n・2週間連続で投稿継続（未投稿なし）\n・発信後の反応データを毎週チェック・改善1回以上"
+    },
+    "woop": {
+      "wish": "SNSを戦略的に運用し、楽しく・無理なく毎日投稿する",
+      "outcome": "・SNS発信が習慣になり、フォロワーが増え始めることで「自分の言葉に価値が生まれる感覚」を得る\n・投稿するたびに「行動している自分」への自信が深まる",
+      "obstacle": "・忙しさや疲労で「今日はいいか…」と思ってしまう\n・投稿するネタが浮かばない、または「こんなの誰も興味ない」と感じる瞬間がくる",
+      "plan": "・もし「今日はいいか」と思ったら → とにかく1行だけ投稿する（短くてもOKルールにする）\n・もしネタに困ったら → ネタ帳または過去投稿からリサイクルして即興で投稿する\n・もし気が乗らなかったら → 「未来のフォロワーのために積み上げている」と声に出して投稿する"
+    }
   },
   {
-    id: "health-optimization",
-    title: "最適な身体作り",
-    description: "理想的な体型と健康状態を維持し続ける",
-    targetDate: "2025-12-31",
-    category: "training",
-    progress: 0,
-    milestones: [
-      { title: "習慣の定着(2025年6月)", target: 25, completed: false },
-      { title: "体重64kg達成(2025年8月)", target: 40, completed: false },
-      { title: "体脂肪率20%達成(2025年9月)", target: 60, completed: false },
-      { title: "体脂肪率17%達成(2025年10月)", target: 80, completed: false },
-      { title: "体脂肪率15%達成(2025年11月)", target: 90, completed: false },
-      { title: "理想体型の維持(2025年12月)", target: 100, completed: false }
-    ]
+    "id": "health-optimization",
+    "title": "最適な身体作り",
+    "description": "理想的な体型と健康状態を維持し続ける",
+    "targetDate": "2025-12-31",
+    "category": "training",
+    "progress": 0,
+    "milestones": [
+      { "title": "習慣の定着(2025年6月)", "target": 25, "completed": false },
+      { "title": "体重64kg達成(2025年8月)", "target": 40, "completed": false },
+      { "title": "体脂肪率20%達成(2025年9月)", "target": 60, "completed": false },
+      { "title": "体脂肪率17%達成(2025年10月)", "target": 80, "completed": false },
+      { "title": "体脂肪率15%達成(2025年11月)", "target": 90, "completed": false },
+      { "title": "理想体型の維持(2025年12月)", "target": 100, "completed": false }
+    ],
+    "okr": {
+      "objective": "",
+      "keyResults": ""
+    },
+    "woop": {
+      "wish": "",
+      "outcome": "",
+      "obstacle": "",
+      "plan": ""
+    }
   }
 ];
 
@@ -256,7 +287,10 @@ export default function Home() {
   const [goals, setGoals] = useState(DEFAULT_GOALS);
   const [selfTalkMessages, setSelfTalkMessages] = useState(DEFAULT_SELF_TALK);
   const [currentSelfTalk, setCurrentSelfTalk] = useState("");
-  const [showGoalForm, setShowGoalForm] = useState(false);
+  
+  const [goalFormData, setGoalFormData] = useState(null); 
+  const [expandedSection, setExpandedSection] = useState({ goalId: null, type: null });
+
   const [editingGoal, setEditingGoal] = useState(null);
   const [showSelfTalkForm, setShowSelfTalkForm] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -408,6 +442,59 @@ export default function Home() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (editingGoal) {
+      // フォームのデータとして編集対象の目標をディープコピーしてセット
+      setGoalFormData(JSON.parse(JSON.stringify(editingGoal)));
+    } else {
+      setGoalFormData(null);
+    }
+  }, [editingGoal]);
+
+
+  // 🔽 OKR/WOOPの表示を切り替える関数
+  const toggleSection = (goalId, type) => {
+    setExpandedSection(prev => {
+      // すでに開いているセクションを再度クリックした場合は閉じる
+      if (prev.goalId === goalId && prev.type === type) {
+        return { goalId: null, type: null };
+      }
+      // 新しいセクションを開く
+      return { goalId, type };
+    });
+  };
+
+
+  // 🔽 編集フォームの入力値を処理する関数
+  const handleGoalFormChange = (e) => {
+    const { name, value } = e.target;
+    // 'okr.objective' のようなネストしたname属性を処理
+    if (name.includes('.')) {
+        const [section, field] = name.split('.');
+        setGoalFormData(prev => ({
+            ...prev,
+            [section]: {
+                ...prev[section],
+                [field]: value,
+            },
+        }));
+    } else {
+        setGoalFormData(prev => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+  };
+
+  // 🔽 編集内容を保存する関数
+  const handleUpdateGoal = (e) => {
+      e.preventDefault();
+      setGoals(prevGoals =>
+          prevGoals.map(goal => (goal.id === goalFormData.id ? goalFormData : goal))
+      );
+      setEditingGoal(null); // モーダルを閉じる
+  };
 
   // パスワード検証関数
   const handlePasswordSubmit = (e) => {
@@ -965,7 +1052,7 @@ export default function Home() {
               {goals.map((goal) => (
                 <div
                   key={goal.id}
-                  className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl"
+                  className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl transition-all duration-300"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
@@ -973,14 +1060,14 @@ export default function Home() {
                       <p className="text-purple-200 text-sm mb-3">{goal.description}</p>
                       <div className="flex items-center gap-4 text-xs text-purple-300">
                         <span>📅 {goal.targetDate}</span>
-                        <span className={`px-2 py-1 rounded-full bg-gradient-to-r ${CATEGORY_COLORS[goal.category]} text-white`}>
+                        <span className={`px-2 py-1 rounded-full bg-gradient-to-r ${CATEGORY_COLORS[goal.category] || CATEGORY_COLORS['investment']} text-white`}>
                           {TASKS.find(t => t.category === goal.category)?.categoryLabel || "🎯"}
                         </span>
                       </div>
                     </div>
                     <button
                       onClick={() => setEditingGoal(goal)}
-                      className="text-cyan-300 hover:text-cyan-200 transition-colors"
+                      className="text-cyan-300 hover:text-cyan-200 transition-colors text-lg p-2"
                     >
                       ✏️
                     </button>
@@ -1014,7 +1101,7 @@ export default function Home() {
                   </div>
 
                   {/* マイルストーン */}
-                  <div className="space-y-2">
+                  <div className="space-y-2 mb-4">
                     <h4 className="text-white text-sm font-semibold mb-2">マイルストーン</h4>
                     {goal.milestones.map((milestone, index) => (
                       <div
@@ -1043,18 +1130,59 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
+                  
+                  {/* OKR / WOOP 表示切り替え */}
+                  <div className="flex gap-2 mt-4 border-t border-white/10 pt-4">
+                    <button onClick={() => toggleSection(goal.id, 'okr')} className={`flex-1 py-2 text-sm rounded-lg transition-all ${expandedSection.goalId === goal.id && expandedSection.type === 'okr' ? 'bg-teal-500 text-white shadow-lg' : 'bg-white/10 text-purple-200 hover:bg-white/20'}`}>
+                      🎯 OKR
+                    </button>
+                    <button onClick={() => toggleSection(goal.id, 'woop')} className={`flex-1 py-2 text-sm rounded-lg transition-all ${expandedSection.goalId === goal.id && expandedSection.type === 'woop' ? 'bg-rose-500 text-white shadow-lg' : 'bg-white/10 text-purple-200 hover:bg-white/20'}`}>
+                      🧠 WOOP
+                    </button>
+                  </div>
+
+                  {/* OKR / WOOP 詳細表示エリア */}
+                  {expandedSection.goalId === goal.id && (
+                    <div className="mt-4 p-4 bg-black/20 rounded-xl">
+                      {expandedSection.type === 'okr' && goal.okr && (
+                        <div className="space-y-3">
+                          <h4 className="font-bold text-white">🎯 OKR</h4>
+                          <div>
+                            <h5 className="font-semibold text-purple-200 text-sm">Objective (目的)</h5>
+                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.okr.objective || "未設定"}</p>
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-purple-200 text-sm">Key Results (成果指標)</h5>
+                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.okr.keyResults || "未設定"}</p>
+                          </div>
+                        </div>
+                      )}
+                      {expandedSection.type === 'woop' && goal.woop && (
+                        <div className="space-y-3">
+                          <h4 className="font-bold text-white">🧠 WOOP</h4>
+                          <div>
+                            <h5 className="font-semibold text-purple-200 text-sm">Wish (望み)</h5>
+                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.woop.wish || "未設定"}</p>
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-purple-200 text-sm">Outcome (結果)</h5>
+                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.woop.outcome || "未設定"}</p>
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-purple-200 text-sm">Obstacle (障害)</h5>
+                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.woop.obstacle || "未設定"}</p>
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-purple-200 text-sm">Plan (計画)</h5>
+                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.woop.plan || "未設定"}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-
-            {/* 目標追加ボタン */}
-            <button
-              onClick={() => setShowGoalForm(true)}
-              className="w-full py-4 bg-gradient-to-r from-teal-400 to-sky-500 text-white rounded-2xl font-semibold hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2"
-            >
-              <span className="text-xl">+</span>
-              新しい目標を追加
-            </button>
           </div>
         )}
 
@@ -1168,56 +1296,77 @@ export default function Home() {
 
 
         {/* 目標追加/編集フォーム */}
-        {(showGoalForm || editingGoal) && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 max-w-md w-full max-h-[90vh] overflow-y-auto">
-              <h2 className="text-white font-bold text-xl mb-4">
-                {editingGoal ? '目標を編集' : '新しい目標を追加'}
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-purple-200 text-sm mb-2 block">目標タイトル</label>
-                  <input
-                    type="text"
-                    className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                    placeholder="例: 経済的自由の達成"
-                  />
+        {editingGoal && goalFormData && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-gradient-to-br from-indigo-900 to-purple-900 backdrop-blur-xl rounded-3xl p-6 border border-white/20 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <form onSubmit={handleUpdateGoal}>
+                <h2 className="text-white font-bold text-xl mb-4">
+                  目標を編集
+                </h2>
+                <div className="space-y-4">
+                  {/* 基本情報 */}
+                  <div>
+                    <label className="text-purple-200 text-sm mb-1 block">目標タイトル</label>
+                    <input name="title" value={goalFormData.title} onChange={handleGoalFormChange} type="text" className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  </div>
+                  <div>
+                    <label className="text-purple-200 text-sm mb-1 block">詳細説明</label>
+                    <textarea name="description" value={goalFormData.description} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-20 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  </div>
+                  
+                  {/* OKR */}
+                  <div className="border-t border-white/10 pt-4 mt-4">
+                      <h3 className="text-lg font-bold text-white mb-2">🎯 OKR</h3>
+                      <div>
+                        <label className="text-purple-200 text-sm mb-1 block">Objective (目的)</label>
+                        <textarea name="okr.objective" value={goalFormData.okr.objective} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-20 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="目標達成によって実現したい状態を入力" />
+                      </div>
+                      <div className="mt-4">
+                        <label className="text-purple-200 text-sm mb-1 block">Key Results (成果指標)</label>
+                        <textarea name="okr.keyResults" value={goalFormData.okr.keyResults} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-28 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="・成果指標1&#10;・成果指標2" />
+                      </div>
+                  </div>
+
+                  {/* WOOP */}
+                  <div className="border-t border-white/10 pt-4 mt-4">
+                      <h3 className="text-lg font-bold text-white mb-2">🧠 WOOP</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-purple-200 text-sm mb-1 block">Wish (望み)</label>
+                            <textarea name="woop.wish" value={goalFormData.woop.wish} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                          </div>
+                          <div>
+                            <label className="text-purple-200 text-sm mb-1 block">Outcome (結果)</label>
+                            <textarea name="woop.outcome" value={goalFormData.woop.outcome} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                          </div>
+                          <div>
+                            <label className="text-purple-200 text-sm mb-1 block">Obstacle (障害)</label>
+                            <textarea name="woop.obstacle" value={goalFormData.woop.obstacle} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                          </div>
+                          <div>
+                            <label className="text-purple-200 text-sm mb-1 block">Plan (計画)</label>
+                            <textarea name="woop.plan" value={goalFormData.woop.plan} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                          </div>
+                      </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="text-purple-200 text-sm mb-2 block">詳細説明</label>
-                  <textarea
-                    className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400 h-20 resize-none"
-                    placeholder="目標の詳細を入力してください"
-                  />
-                </div>
-                <div>
-                  <label className="text-purple-200 text-sm mb-2 block">達成予定日</label>
-                  <input
-                    type="date"
-                    className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                </div>
-                <div className="flex gap-3">
+                
+                <div className="flex gap-3 mt-6">
                   <button
-                    onClick={() => {
-                      setShowGoalForm(false);
-                      setEditingGoal(null);
-                    }}
+                    type="button"
+                    onClick={() => setEditingGoal(null)}
                     className="flex-1 py-3 bg-white/20 text-white rounded-xl font-semibold hover:bg-white/30 transition-all"
                   >
                     キャンセル
                   </button>
                   <button
-                    onClick={() => {
-                      setShowGoalForm(false);
-                      setEditingGoal(null);
-                    }}
+                    type="submit"
                     className="flex-1 py-3 bg-gradient-to-r from-teal-400 to-sky-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
                   >
-                    {editingGoal ? '更新' : '追加'}
+                    更新
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         )}
