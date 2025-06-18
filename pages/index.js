@@ -262,6 +262,9 @@ export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [oneTimeTasks, setOneTimeTasks] = useState([]);
+  const [newOneTimeTask, setNewOneTimeTask] = useState("");
+  const [newOneTimeTaskPoints, setNewOneTimeTaskPoints] = useState('3');
 
   const CORRECT_PASSWORD = "1229"; 
 
@@ -322,6 +325,8 @@ export default function Home() {
       const storedGoals = JSON.parse(localStorage.getItem("habitGoals") || "null");
       const storedSelfTalk = JSON.parse(localStorage.getItem("habitSelfTalk") || "null");
       const today = getTodayString();
+      const storedOneTimeTasks = JSON.parse(localStorage.getItem("habitOneTimeTasks") || "[]"); // 👈 ここに追加
+      setOneTimeTasks(storedOneTimeTasks);
       
       setPoints(storedPoints);
       
@@ -388,6 +393,12 @@ export default function Home() {
     }
   }, [selfTalkMessages, isLoaded]);
 
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("habitOneTimeTasks", JSON.stringify(oneTimeTasks));
+    }
+  }, [oneTimeTasks, isLoaded]);
+
   // 既存のuseEffectの後に以下を追加
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -440,6 +451,51 @@ export default function Home() {
   const cancelEditingReward = () => {
     setTempRewardText("");
     setIsEditingReward(false);
+  };
+
+  const handleAddOneTimeTask = () => {
+    // textareaの値を改行で分割してタスクの配列を作成
+    const taskLines = newOneTimeTask.trim().split('\n');
+
+    // 入力が空、またはスペースのみの場合は処理を終了
+    if (taskLines.length === 0 || taskLines[0] === '') {
+        setNewOneTimeTask("");
+        return;
+    }
+
+    // バッチで追加されるタスクすべてに適用するポイントを解析
+    const points = parseInt(newOneTimeTaskPoints, 10);
+    const pointsToAdd = !isNaN(points) && points > 0 ? points : 1;
+
+    const newTasks = taskLines
+        .map(line => line.trim()) // 各行の空白を削除
+        .filter(line => line !== "") // 空の行を除外
+        .map((line, index) => ({
+            id: `one-time-${Date.now()}-${index}`, // バッチ内でもユニークなIDを生成
+            text: line,
+            points: pointsToAdd,
+            completed: false
+        }));
+
+    // 作成されたタスクが1つ以上ある場合のみステートを更新
+    if (newTasks.length > 0) {
+        setOneTimeTasks(prev => [...newTasks, ...prev]);
+        setNewOneTimeTask("");
+        setNewOneTimeTaskPoints('3'); // 入力欄をリセット
+    }
+  };
+
+  const handleCompleteOneTimeTask = (taskId) => {
+    if (todayDone.includes(taskId)) return;
+    const task = oneTimeTasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    setPoints(prev => ({ ...prev, [taskId]: (prev[taskId] || 0) + task.points }));
+    setTodayDone(prev => [...prev, taskId]);
+  };
+
+  const handleDeleteOneTimeTask = (taskId) => {
+    setOneTimeTasks(prev => prev.filter(t => t.id !== taskId));
   };
 
   // 目標の進捗更新
@@ -746,7 +802,69 @@ export default function Home() {
               </div>
             )}
 
+            {/* 単発タスクセクション */}
+            <div className="mb-6">
+              <h2 className="text-white font-semibold mb-4 flex items-center">
+                <div className="w-3 h-3 bg-gradient-to-r from-lime-400 to-green-500 rounded-full mr-2"></div>
+                単発タスク
+              </h2>
+              {/* Input form */}
+              <div className="flex gap-2 mb-4 items-start">
+                <textarea
+                  value={newOneTimeTask}
+                  onChange={(e) => setNewOneTimeTask(e.target.value)}
+                  placeholder="タスクを改行で区切って複数入力できます。&#10;例：&#10;・買い物に行く&#10;・XXさんに電話する"
+                  className="flex-1 p-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400 h-24 resize-y"
+                />
+                <div className="flex flex-col gap-2 shrink-0">
+                  <input
+                    type="number"
+                    value={newOneTimeTaskPoints}
+                    onChange={(e) => setNewOneTimeTaskPoints(e.target.value)}
+                    className="w-24 p-3 bg-white/20 border border-white/30 rounded-xl text-white text-center placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    placeholder="各pt"
+                    min="1"
+                  />
+                  <button
+                    onClick={handleAddOneTimeTask}
+                    disabled={!newOneTimeTask.trim()}
+                    className="w-24 py-3 bg-gradient-to-r from-lime-400 to-green-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    一括追加
+                  </button>
+                </div>
+              </div>
+              {/* Task list */}
+              <div className="space-y-3">
+                {oneTimeTasks.filter(task => !todayDone.includes(task.id)).map((task) => (
+                  <div key={task.id} className="group bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 transition-all hover:bg-white/15">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0 mr-3">
+                        <h3 className="text-white font-medium text-sm leading-tight mb-1">{task.text}</h3>
+                        <span className="text-yellow-300 text-xs font-bold">+{task.points}pt</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => handleCompleteOneTimeTask(task.id)}
+                          className="w-12 h-12 rounded-full font-semibold text-xs transition-all duration-200 flex items-center justify-center bg-gradient-to-r from-green-400 to-emerald-500 hover:shadow-lg hover:scale-110 text-white shadow-lg"
+                        >
+                          完了
+                        </button>
+                        <button
+                          onClick={() => handleDeleteOneTimeTask(task.id)}
+                          className="w-8 h-8 rounded-full font-semibold text-xs transition-all duration-200 flex items-center justify-center bg-red-500/50 hover:bg-red-500/80 text-white opacity-50 group-hover:opacity-100"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* 完了済みタスク */}
+            
             {completedTodayTasks.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-white font-semibold mb-4 flex items-center">
@@ -761,6 +879,17 @@ export default function Home() {
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-green-200 text-sm">{task.label}</span>
+                        <span className="text-green-300 text-xs font-bold">+{task.points}pt</span>
+                      </div>
+                    </div>
+                  ))}
+                  {oneTimeTasks.filter(task => todayDone.includes(task.id)).map((task) => (
+                    <div
+                      key={task.id}
+                      className="bg-green-500/10 backdrop-blur-xl rounded-xl p-3 border border-green-400/20"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-green-200 text-sm">{task.text}</span>
                         <span className="text-green-300 text-xs font-bold">+{task.points}pt</span>
                       </div>
                     </div>
