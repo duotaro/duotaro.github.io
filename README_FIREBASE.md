@@ -54,21 +54,37 @@ NEXT_PUBLIC_NOTION_TOKEN=your-notion-token
 URL_PREFIX=
 ```
 
-### 6. Firestore セキュリティルールの設定（本番環境用）
+### 6. Firestore セキュリティルールの設定（重要）
 
-Firebase Console の Firestore Database で「ルール」タブを選択し、以下のルールを設定：
+**方法1: Firebase CLIを使用（推奨）**
 
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // 認証されたユーザーは自分のドキュメントのみアクセス可能
-    match /habitData/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
+1. Firebase CLIをインストール:
+```bash
+npm install -g firebase-tools
 ```
+
+2. Firebase プロジェクトにログイン:
+```bash
+firebase login
+firebase use --add  # プロジェクトを選択
+```
+
+3. セキュリティルールをデプロイ:
+```bash
+firebase deploy --only firestore:rules
+```
+
+**方法2: Firebase Console で手動設定**
+
+Firebase Console の Firestore Database で「ルール」タブを選択し、`firestore.rules` の内容をコピー＆ペーストして「公開」をクリック。
+
+**セキュリティルールの内容:**
+- 許可されたユーザーIDのみアクセス可能
+- Firebase匿名認証の有効/無効を制御
+- カスタムユーザーIDのホワイトリスト機能
+- 未許可アクセスの完全ブロック
+
+**⚠️ 重要**: このルール設定により、サーバーサイドで真のセキュリティが確保されます。クライアントサイドのバイパスは不可能になります。
 
 ## データ構造
 

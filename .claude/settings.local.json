@@ -12,7 +12,9 @@
       "Bash(pkill:*)",
       "Bash(true)",
       "Bash(git push:*)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(touch:*)",
+      "Bash(firebase:*)"
     ],
     "deny": []
   }

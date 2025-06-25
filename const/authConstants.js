@@ -1,14 +1,8 @@
-// 許可されたユーザーID（個人用設定）
-export const ALLOWED_USER_IDS = [
-  // あなたのメインユーザーID
-  'duotaro-main',
-  
-  // 必要に応じて追加のIDをここに記載
-  // 'duotaro-mobile',
-  // 'duotaro-work',
-];
+// セキュリティ向上のため、カスタムユーザーIDシステムは無効化
+// Firebase匿名認証のみを使用することで、なりすましを防止
+export const ALLOWED_USER_IDS = [];
 
-// Firebase匿名認証も許可するかどうか
+// Firebase匿名認証のみを使用（セキュリティ向上）
 export const ALLOW_FIREBASE_AUTH = true;
 
 // エラーメッセージ

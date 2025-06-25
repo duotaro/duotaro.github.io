@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 許可されたUIDリスト（あなたのUID確認後、ここに追加してください）
+    function getAllowedUIDs() {
+      return [
+        'mJEUNOImvIXI68aCdAvqn7LCWnq1', // コンソールで確認したUIDをここに記載
+      ];
+    }
+    
+    // habitDataコレクションのルール
+    match /habitData/{userId} {
+      // 特定のUIDのみアクセス可能（使用量制限対策）
+      allow read, write, create, update, delete: if 
+        request.auth != null && 
+        request.auth.uid == userId &&
+        request.auth.uid in getAllowedUIDs();
+    }
+    
+    // その他のコレクションはすべて拒否
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

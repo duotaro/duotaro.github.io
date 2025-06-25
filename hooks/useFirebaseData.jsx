@@ -88,6 +88,15 @@ export const useFirebaseData = (userId) => {
       setIsLoaded(true);
     } catch (error) {
       console.error('Error loading data from Firestore:', error);
+      
+      // Firestoreセキュリティルールでブロックされた場合の処理
+      if (error.code === 'permission-denied') {
+        console.warn('Access denied by Firestore security rules. Falling back to localStorage.');
+        // アクセス拒否の場合、LocalStorageにフォールバック
+        loadDataFromLocalStorage();
+        return;
+      }
+      
       setIsLoaded(true);
     }
   };
@@ -101,6 +110,12 @@ export const useFirebaseData = (userId) => {
       await updateDoc(userDocRef, { [field]: value });
     } catch (error) {
       console.error(`Error saving ${field} to Firestore:`, error);
+      
+      // Firestoreセキュリティルールでブロックされた場合の処理
+      if (error.code === 'permission-denied') {
+        console.warn('Access denied by Firestore security rules. Check your user ID authorization.');
+        // エラーを表示するが、アプリの動作は継続
+      }
     }
   };
 

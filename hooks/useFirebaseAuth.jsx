@@ -30,6 +30,8 @@ export const useFirebaseAuth = () => {
       
       if (firebaseUser) {
         setUser(firebaseUser);
+        // UID を表示（Firestoreルール設定用）
+        console.log('🔑 Your Firebase UID for Firestore rules:', firebaseUser.uid);
         // パスワード認証状態をチェック
         const passwordAuthStatus = localStorage.getItem("habitPasswordAuth");
         console.log('useFirebaseAuth: Password auth status', passwordAuthStatus);
