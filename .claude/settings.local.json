@@ -19,7 +19,9 @@
       "Bash(git filter-branch:*)",
       "Bash(java:*)",
       "Bash(curl:*)",
-      "Bash(git gc:*)"
+      "Bash(git gc:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }

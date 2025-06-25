@@ -9,7 +9,6 @@ import { DEFAULT_SELF_TALK } from '../const/selfTalkConstants';
 import { useFirebaseData } from '../hooks/useFirebaseData';
 import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import { useTaskLogic } from '../hooks/useTaskLogic';
-import { useUserIdManager } from '../hooks/useUserIdManager';
 import { useUserAuth } from '../hooks/useUserAuth';
 
 // Import components
@@ -27,19 +26,16 @@ import SelfTalkSection from '../components/habit/SelfTalkSection';
 import SelfTalkModal from '../components/habit/SelfTalkModal';
 import TemplateSection from '../components/habit/TemplateSection';
 import BackupRestoreSection from '../components/habit/BackupRestoreSection';
-import UserIdSection from '../components/habit/UserIdSection';
-import UnauthorizedScreen from '../components/habit/UnauthorizedScreen';
 
 export default function Home() {
   // Hook imports
   const auth = useFirebaseAuth();
-  const userIdManager = useUserIdManager();
   
-  // 実際に使用するユーザーIDを決定
-  const effectiveUserId = userIdManager.getEffectiveUserId(auth.user?.uid);
+  // 実際に使用するユーザーIDを決定（Firebaseユーザーのみ）
+  const effectiveUserId = auth.user?.uid;
   
-  // ユーザー認証チェック
-  const userAuth = useUserAuth(effectiveUserId, userIdManager.isUsingCustomId, auth.user?.uid);
+  // ユーザー認証チェック（制限撤廃済み）
+  const userAuth = useUserAuth(effectiveUserId, false, auth.user?.uid);
   
   const habitData = useFirebaseData(effectiveUserId);
   const taskLogic = useTaskLogic(
@@ -237,15 +233,7 @@ export default function Home() {
     return <AuthLogin auth={auth} />;
   }
 
-  if (!userAuth.isAuthorized) {
-    return (
-      <UnauthorizedScreen 
-        authError={userAuth.authError}
-        currentUserId={effectiveUserId}
-        onRetry={() => window.location.reload()}
-      />
-    );
-  }
+  // アクセス制限を撤廃したため、この条件は不要
 
   if (showMigration) {
     return (
@@ -527,8 +515,6 @@ export default function Home() {
 
         {currentView === "settings" && (
           <div className="space-y-6">
-            <UserIdSection firebaseUserId={auth.user?.uid} />
-            
             <BackupRestoreSection userId={effectiveUserId} />
             
             {/* その他の設定 */}
@@ -552,7 +538,7 @@ export default function Home() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-purple-200">認証方式</span>
-                  <span className="text-white text-xs">{userIdManager.isUsingCustomId ? 'カスタムID' : 'Firebase匿名認証'}</span>
+                  <span className="text-white text-xs">Firebase匿名認証</span>
                 </div>
               </div>
             </div>

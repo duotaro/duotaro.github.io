@@ -92,17 +92,10 @@ export const useFirebaseData = (userId) => {
     } catch (error) {
       console.error('Error loading data from Firestore:', error);
       
-      // Firestoreセキュリティルールでブロックされた場合の処理
-      if (error.code === 'permission-denied') {
-        console.error('⚠️ FIRESTORE ACCESS DENIED!');
-        console.error('Your current UID is not in the allowed list.');
-        console.error('Current userId:', userId);
-        console.error('Check Firestore rules and allowed UIDs.');
-        alert(`⚠️ Firestore アクセス拒否\n\nあなたのUID (${userId}) は許可リストにありません。\n\n対処法:\n1. ブラウザデータをクリア\n2. 再度ログイン\n3. UIDが一致するか確認\n\nLocalStorageにフォールバックします。`);
-        // アクセス拒否の場合、LocalStorageにフォールバック
-        loadDataFromLocalStorage();
-        return;
-      }
+      // Firestoreエラーの場合はLocalStorageにフォールバック
+      console.warn('Firestore access failed, falling back to localStorage:', error);
+      loadDataFromLocalStorage();
+      return;
       
       setIsLoaded(true);
     }
@@ -121,13 +114,8 @@ export const useFirebaseData = (userId) => {
     } catch (error) {
       console.error(`Error saving ${field} to Firestore:`, error);
       
-      // Firestoreセキュリティルールでブロックされた場合の処理
-      if (error.code === 'permission-denied') {
-        console.error('⚠️ FIRESTORE WRITE DENIED!');
-        console.error(`Failed to save ${field}:`, value);
-        console.error('Current userId:', userId);
-        alert(`⚠️ Firestore 書き込み拒否\n\nフィールド: ${field}\nUID: ${userId}\n\nFirestoreルールで拒否されました。\nUIDが正しいか確認してください。`);
-      }
+      // Firestoreエラーをログに記録
+      console.warn(`Failed to save ${field} to Firestore:`, error);
     }
   };
 
