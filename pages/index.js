@@ -10,6 +10,7 @@ import { useFirebaseData } from '../hooks/useFirebaseData';
 import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import { useTaskLogic } from '../hooks/useTaskLogic';
 import { useUserIdManager } from '../hooks/useUserIdManager';
+import { useUserAuth } from '../hooks/useUserAuth';
 
 // Import components
 import LoadingScreen from '../components/habit/LoadingScreen';
@@ -27,6 +28,7 @@ import SelfTalkModal from '../components/habit/SelfTalkModal';
 import TemplateSection from '../components/habit/TemplateSection';
 import BackupRestoreSection from '../components/habit/BackupRestoreSection';
 import UserIdSection from '../components/habit/UserIdSection';
+import UnauthorizedScreen from '../components/habit/UnauthorizedScreen';
 
 export default function Home() {
   // Hook imports
@@ -35,6 +37,10 @@ export default function Home() {
   
   // 実際に使用するユーザーIDを決定
   const effectiveUserId = userIdManager.getEffectiveUserId(auth.user?.uid);
+  
+  // ユーザー認証チェック
+  const userAuth = useUserAuth(effectiveUserId, userIdManager.isUsingCustomId, auth.user?.uid);
+  
   const habitData = useFirebaseData(effectiveUserId);
   const taskLogic = useTaskLogic(
     habitData.todayDone, 
@@ -223,12 +229,22 @@ export default function Home() {
     setMigrationCompleted(true);
   };
 
-  if (auth.loading || !habitData.isLoaded) {
+  if (auth.loading || !habitData.isLoaded || userAuth.isCheckingAuth) {
     return <LoadingScreen />;
   }
 
   if (!auth.isAuthenticated) {
     return <AuthLogin auth={auth} />;
+  }
+
+  if (!userAuth.isAuthorized) {
+    return (
+      <UnauthorizedScreen 
+        authError={userAuth.authError}
+        currentUserId={effectiveUserId}
+        onRetry={() => window.location.reload()}
+      />
+    );
   }
 
   if (showMigration) {
