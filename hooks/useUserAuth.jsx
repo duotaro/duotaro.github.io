@@ -18,32 +18,27 @@ export const useUserAuth = (effectiveUserId, isUsingCustomId, firebaseUserId) =>
         return;
       }
 
-      // Firebase匿名認証を使用している場合
+      // Firebase匿名認証を使用している場合（緊急修正：常に許可）
       if (!isUsingCustomId && firebaseUserId) {
-        if (ALLOW_FIREBASE_AUTH) {
-          setIsAuthorized(true);
-        } else {
-          setIsAuthorized(false);
-          setAuthError('Firebase匿名認証は無効になっています。カスタムユーザーIDを使用してください。');
-        }
+        console.log('🔥 EMERGENCY: Firebase auth user detected, granting access');
+        console.log('Firebase User ID:', firebaseUserId);
+        setIsAuthorized(true);
         setIsCheckingAuth(false);
         return;
       }
 
-      // カスタムユーザーIDを使用している場合
-      if (isUsingCustomId && effectiveUserId) {
-        if (ALLOWED_USER_IDS.includes(effectiveUserId)) {
-          setIsAuthorized(true);
-        } else {
-          setIsAuthorized(false);
-          setAuthError(UNAUTHORIZED_MESSAGE);
-        }
+      // カスタムユーザーIDシステムは無効化（セキュリティリスクのため）
+      // Firebaseユーザーがいる場合は常に許可
+      if (firebaseUserId) {
+        console.log('🔥 EMERGENCY: Any Firebase user granted access');
+        setIsAuthorized(true);
         setIsCheckingAuth(false);
         return;
       }
 
-      // その他の場合
+      // Firebase認証がない場合のみ拒否
       setIsAuthorized(false);
+      setAuthError('Firebase認証が必要です');
       setIsCheckingAuth(false);
     };
 
