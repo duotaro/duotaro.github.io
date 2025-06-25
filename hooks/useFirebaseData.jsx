@@ -35,7 +35,10 @@ export const useFirebaseData = (userId) => {
 
   // Firestoreからデータを読み込み
   const loadDataFromFirestore = async () => {
-    if (!userId || !db) return;
+    if (!userId || typeof db === 'undefined' || !db) {
+      console.log('⚠️ loadDataFromFirestore: Missing userId or db');
+      return;
+    }
 
     try {
       const userDocRef = doc(db, 'habitData', userId);
@@ -107,7 +110,10 @@ export const useFirebaseData = (userId) => {
 
   // Firestoreにデータを保存
   const saveDataToFirestore = async (field, value) => {
-    if (!userId || !isLoaded || !db) return;
+    if (!userId || !isLoaded || typeof db === 'undefined' || !db) {
+      console.log('⚠️ saveDataToFirestore: Missing userId, not loaded, or db unavailable');
+      return;
+    }
     
     try {
       const userDocRef = doc(db, 'habitData', userId);
@@ -130,14 +136,15 @@ export const useFirebaseData = (userId) => {
     console.log('🔍 useFirebaseData Debug:');
     console.log('- userId:', userId);
     console.log('- db available:', !!db);
-    console.log('- Firebase initialized:', !!db && !!auth);
+    console.log('- auth available:', typeof auth !== 'undefined' && !!auth);
+    console.log('- Firebase initialized:', !!db && typeof auth !== 'undefined' && !!auth);
     
-    if (userId) {
+    if (userId && typeof db !== 'undefined' && db) {
       console.log('🔥 Using Firestore for data storage');
       loadDataFromFirestore();
     } else {
       // userIdがない場合（Firebaseが利用できない場合）は元のlocalStorage方式を使用
-      console.log('📱 useFirebaseData: No userId, falling back to localStorage');
+      console.log('📱 useFirebaseData: No userId or db, falling back to localStorage');
       console.log('📱 Reason: Firebase not available or user not authenticated');
       loadDataFromLocalStorage();
     }

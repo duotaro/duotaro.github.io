@@ -15,16 +15,20 @@ export const useFirebaseAuth = () => {
     console.log('🔍 useFirebaseAuth Debug:');
     console.log('- Auth instance available:', !!auth);
     console.log('- Window available:', typeof window !== 'undefined');
-    console.log('- API Key set:', !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
+    console.log('- Auth object:', auth);
     
-    if (!auth) {
+    // authが未定義の場合の安全なチェック
+    if (typeof auth === 'undefined' || !auth) {
       console.log('⚠️ useFirebaseAuth: No auth instance, checking localStorage for fallback');
-      console.log('⚠️ Reason: Firebase not initialized or environment variables missing');
+      console.log('⚠️ Reason: Firebase not initialized or auth is undefined');
+      
       // Firebaseが利用できない場合のフォールバック
-      const passwordAuthStatus = localStorage.getItem("habitPasswordAuth");
-      if (passwordAuthStatus === "authenticated") {
-        console.log('📱 Using localStorage fallback authentication');
-        setIsAuthenticated(true);
+      if (typeof window !== 'undefined') {
+        const passwordAuthStatus = localStorage.getItem("habitPasswordAuth");
+        if (passwordAuthStatus === "authenticated") {
+          console.log('📱 Using localStorage fallback authentication');
+          setIsAuthenticated(true);
+        }
       }
       setLoading(false);
       return;
@@ -70,11 +74,11 @@ export const useFirebaseAuth = () => {
         console.log('useFirebaseAuth: Password correct, attempting Firebase auth', { auth: !!auth, user: !!user });
         
         // パスワードが正しい場合、匿名認証でFirebaseにサインイン
-        if (auth && !user) {
+        if (typeof auth !== 'undefined' && auth && !user) {
           console.log('useFirebaseAuth: Signing in anonymously...');
           await signInAnonymously(auth);
           console.log('useFirebaseAuth: Anonymous sign-in successful');
-        } else if (!auth) {
+        } else if (typeof auth === 'undefined' || !auth) {
           console.log('useFirebaseAuth: No Firebase auth available, using fallback');
         }
         
@@ -98,7 +102,7 @@ export const useFirebaseAuth = () => {
   // ログアウト関数
   const handleLogout = async () => {
     try {
-      if (auth) {
+      if (typeof auth !== 'undefined' && auth) {
         await signOut(auth);
       }
       setIsAuthenticated(false);
