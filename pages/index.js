@@ -189,7 +189,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <div className="max-w-md mx-auto px-4 py-6">
+      <div className="max-w-md lg:max-w-2xl xl:max-w-4xl mx-auto px-4 py-6">
         {/* ヘッダー */}
         <div className="text-center mb-6 pt-4 relative">
           <button
@@ -231,184 +231,194 @@ export default function Home() {
 
         {currentView === "tasks" && (
           <>
-            <TaskProgressSummary 
-              totalPoints={totalPoints}
-              todayPoints={todayPoints}
-              completionRate={completionRate}
-              todayTasks={todayTasks}
-              todayDone={habitData.todayDone}
-            />
+            <div className="lg:grid lg:grid-cols-2 lg:gap-6">
+              <div className="lg:col-span-2">
+                <TaskProgressSummary 
+                  totalPoints={totalPoints}
+                  todayPoints={todayPoints}
+                  completionRate={completionRate}
+                  todayTasks={todayTasks}
+                  todayDone={habitData.todayDone}
+                />
 
-            <SelfTalkBanner 
-              currentSelfTalk={currentSelfTalk}
-              onRefresh={() => setCurrentSelfTalk(getRandomSelfTalk())}
-            />
-
-            {/* 今日のタスク */}
-            {todayTasks.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-white font-semibold mb-4 flex items-center">
-                  <div className="w-3 h-3 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full mr-2"></div>
-                  今日の予定
-                </h2>
-                <div className="space-y-3">
-                  {todayTasks.map((task) => {
-                    const isCompleted = habitData.todayDone.includes(task.id);
-                    return (
-                      <TaskItem
-                        key={task.id}
-                        task={task}
-                        isCompleted={isCompleted}
-                        onComplete={taskLogic.handleComplete}
-                      />
-                    );
-                  })}
-                </div>
+                <SelfTalkBanner 
+                  currentSelfTalk={currentSelfTalk}
+                  onRefresh={() => setCurrentSelfTalk(getRandomSelfTalk())}
+                />
               </div>
-            )}
 
-            {/* 追加タスクセクション */}
-            {addableTasks.length > 0 && (
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-white font-semibold flex items-center">
-                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-2"></div>
-                    追加タスク
-                  </h2>
-                  <button
-                    onClick={() => setShowAddTask(!showAddTask)}
-                    className="text-cyan-300 text-sm hover:text-cyan-200 transition-colors"
-                  >
-                    {showAddTask ? '閉じる' : '表示'}
-                  </button>
-                </div>
-                
-                {showAddTask && (
-                  <div className="space-y-3">
-                    {addableTasks.map((task) => (
-                      <TaskItem
-                        key={task.id}
-                        task={task}
-                        isCompleted={false}
-                        onComplete={taskLogic.handleComplete}
-                      />
-                    ))}
+              <div className="lg:col-span-1">
+                {/* 今日のタスク */}
+                {todayTasks.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-white font-semibold mb-4 flex items-center">
+                      <div className="w-3 h-3 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full mr-2"></div>
+                      今日の予定
+                    </h2>
+                    <div className="space-y-3">
+                      {todayTasks.map((task) => {
+                        const isCompleted = habitData.todayDone.includes(task.id);
+                        return (
+                          <TaskItem
+                            key={task.id}
+                            task={task}
+                            isCompleted={isCompleted}
+                            onComplete={taskLogic.handleComplete}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 追加タスクセクション */}
+                {addableTasks.length > 0 && (
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-white font-semibold flex items-center">
+                        <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mr-2"></div>
+                        追加タスク
+                      </h2>
+                      <button
+                        onClick={() => setShowAddTask(!showAddTask)}
+                        className="text-cyan-300 text-sm hover:text-cyan-200 transition-colors"
+                      >
+                        {showAddTask ? '閉じる' : '表示'}
+                      </button>
+                    </div>
+                    
+                    {showAddTask && (
+                      <div className="space-y-3">
+                        {addableTasks.map((task) => (
+                          <TaskItem
+                            key={task.id}
+                            task={task}
+                            isCompleted={false}
+                            onComplete={taskLogic.handleComplete}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            )}
 
-            {/* 単発タスクセクション */}
-            <div className="mb-6">
-              <h2 className="text-white font-semibold mb-4 flex items-center">
-                <div className="w-3 h-3 bg-gradient-to-r from-lime-400 to-green-500 rounded-full mr-2"></div>
-                単発タスク
-              </h2>
-              
-              <OneTimeTaskInput onAddTask={taskLogic.handleAddOneTimeTask} />
-              
-              <div className="space-y-3">
-                {habitData.oneTimeTasks.filter(task => !habitData.todayDone.includes(task.id)).map((task) => (
-                  <OneTimeTaskItem
-                    key={task.id}
-                    task={task}
-                    onComplete={taskLogic.handleCompleteOneTimeTask}
-                    onDelete={taskLogic.handleDeleteOneTimeTask}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* 完了済みタスク */}
-            {completedTodayTasks.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-white font-semibold mb-4 flex items-center">
-                  <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mr-2"></div>
-                  完了済み
-                </h2>
-                <div className="space-y-2">
-                  {completedTodayTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="bg-green-500/10 backdrop-blur-xl rounded-xl p-3 border border-green-400/20"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-green-200 text-sm">{task.label}</span>
-                        <span className="text-green-300 text-xs font-bold">+{task.points}pt</span>
-                      </div>
-                    </div>
-                  ))}
-                  {habitData.oneTimeTasks.filter(task => habitData.todayDone.includes(task.id)).map((task) => (
-                    <div
-                      key={task.id}
-                      className="bg-green-500/10 backdrop-blur-xl rounded-xl p-3 border border-green-400/20"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-green-200 text-sm">{task.text}</span>
-                        <span className="text-green-300 text-xs font-bold">+{task.points}pt</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ご褒美設定 */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 mb-6 border border-white/20 shadow-xl">
-              <h2 className="text-white font-semibold mb-3 flex items-center">
-                <div className="w-3 h-3 bg-gradient-to-r from-pink-400 to-red-500 rounded-full mr-2"></div>
-                ご褒美設定
-              </h2>
-              {isEditingReward ? (
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    value={tempRewardText}
-                    onChange={(e) => setTempRewardText(e.target.value)}
-                    className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                    placeholder="例: 100ptでラーメンを食べて良いこととする"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={saveRewardSetting}
-                      className="flex-1 py-2 bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
-                    >
-                      保存
-                    </button>
-                    <button
-                      onClick={cancelEditingReward}
-                      className="flex-1 py-2 bg-white/20 text-white rounded-xl font-semibold hover:bg-white/30 transition-all"
-                    >
-                      キャンセル
-                    </button>
+              <div className="lg:col-span-1">
+                {/* 単発タスクセクション */}
+                <div className="mb-6">
+                  <h2 className="text-white font-semibold mb-4 flex items-center">
+                    <div className="w-3 h-3 bg-gradient-to-r from-lime-400 to-green-500 rounded-full mr-2"></div>
+                    単発タスク
+                  </h2>
+                  
+                  <OneTimeTaskInput onAddTask={taskLogic.handleAddOneTimeTask} />
+                  
+                  <div className="space-y-3">
+                    {habitData.oneTimeTasks.filter(task => !habitData.todayDone.includes(task.id)).map((task) => (
+                      <OneTimeTaskItem
+                        key={task.id}
+                        task={task}
+                        onComplete={taskLogic.handleCompleteOneTimeTask}
+                        onDelete={taskLogic.handleDeleteOneTimeTask}
+                      />
+                    ))}
                   </div>
                 </div>
-              ) : (
-                <div className="flex items-center justify-between">
-                  <p className="text-purple-200 text-sm flex items-center">
-                    🪙 {habitData.rewardSetting} ✨
-                  </p>
-                  <button
-                    onClick={startEditingReward}
-                    className="px-4 py-1 bg-gradient-to-r from-blue-400 to-cyan-500 text-white rounded-lg text-sm font-semibold hover:shadow-lg transition-all hover:scale-105"
-                  >
-                    編集
-                  </button>
-                </div>
-              )}
+
+                {/* 完了済みタスク */}
+                {completedTodayTasks.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-white font-semibold mb-4 flex items-center">
+                      <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mr-2"></div>
+                      完了済み
+                    </h2>
+                    <div className="space-y-2">
+                      {completedTodayTasks.map((task) => (
+                        <div
+                          key={task.id}
+                          className="bg-green-500/10 backdrop-blur-xl rounded-xl p-3 border border-green-400/20"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-green-200 text-sm">{task.label}</span>
+                            <span className="text-green-300 text-xs font-bold">+{task.points}pt</span>
+                          </div>
+                        </div>
+                      ))}
+                      {habitData.oneTimeTasks.filter(task => habitData.todayDone.includes(task.id)).map((task) => (
+                        <div
+                          key={task.id}
+                          className="bg-green-500/10 backdrop-blur-xl rounded-xl p-3 border border-green-400/20"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-green-200 text-sm">{task.text}</span>
+                            <span className="text-green-300 text-xs font-bold">+{task.points}pt</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* SNS用テキスト */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
-              <h2 className="text-white font-semibold mb-3 flex items-center">
-                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2"></div>
-                SNS用テキスト
-              </h2>
-              <textarea
-                value={shareText}
-                className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-                readOnly
-              />
+            <div className="lg:col-span-2">
+              {/* ご褒美設定 */}
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 mb-6 border border-white/20 shadow-xl">
+                <h2 className="text-white font-semibold mb-3 flex items-center">
+                  <div className="w-3 h-3 bg-gradient-to-r from-pink-400 to-red-500 rounded-full mr-2"></div>
+                  ご褒美設定
+                </h2>
+                {isEditingReward ? (
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      value={tempRewardText}
+                      onChange={(e) => setTempRewardText(e.target.value)}
+                      className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="例: 100ptでラーメンを食べて良いこととする"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={saveRewardSetting}
+                        className="flex-1 py-2 bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
+                      >
+                        保存
+                      </button>
+                      <button
+                        onClick={cancelEditingReward}
+                        className="flex-1 py-2 bg-white/20 text-white rounded-xl font-semibold hover:bg-white/30 transition-all"
+                      >
+                        キャンセル
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <p className="text-purple-200 text-sm flex items-center">
+                      🪙 {habitData.rewardSetting} ✨
+                    </p>
+                    <button
+                      onClick={startEditingReward}
+                      className="px-4 py-1 bg-gradient-to-r from-blue-400 to-cyan-500 text-white rounded-lg text-sm font-semibold hover:shadow-lg transition-all hover:scale-105"
+                    >
+                      編集
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* SNS用テキスト */}
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
+                <h2 className="text-white font-semibold mb-3 flex items-center">
+                  <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2"></div>
+                  SNS用テキスト
+                </h2>
+                <textarea
+                  value={shareText}
+                  className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  readOnly
+                />
+              </div>
             </div>
           </>
         )}
