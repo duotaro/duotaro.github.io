@@ -1,475 +1,98 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const TASKS = [
-  // 投資
-  { 
-    id: "orderflow-study", 
-    category: "investment",
-    categoryLabel: "🪙 投資",
-    label: "OFトレード学習", 
-    points: 5,
-    days: [1, 2, 3, 4, 5], // 平日毎日
-    time: "13時から"
-  },
-  { 
-    id: "defi-review", 
-    category: "investment",
-    categoryLabel: "🪙 投資",
-    label: "DeFi運用見直し", 
-    points: 5,
-    days: [1], // 月曜
-    time: "OFトレード学習後"
-  },
-  // コンテンツ作成
-  { 
-    id: "note-writing", 
-    category: "content",
-    categoryLabel: "✍️ コンテンツ作成",
-    label: "OF学習noteまとめ", 
-    points: 5,
-    days: [1], // 月曜
-    time: "DeFi運用見直し後"
-  },
-  { 
-    id: "sns-post", 
-    category: "content",
-    categoryLabel: "✍️ コンテンツ作成",
-    label: "note要点をSNSに投稿", 
-    points: 3,
-    days: [2, 4], // 火曜・木曜
-    time: "Orderflow学習後"
-  },
-  // 学習
-  { 
-    id: "future-tech-study", 
-    category: "learning",
-    categoryLabel: "🧠 学習（先端技術）",
-    label: "先端技術に関する学習", 
-    points: 5,
-    days: [2, 4], // 火曜・木曜
-    time: "SNSに投稿後"
-  },
-  // トレーニング
-  { 
-    id: "pomodoro-exercise", 
-    category: "training",
-    categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "筋トレ・ストレッチ(ポモドーロ)", 
-    points: 2,
-    days: [1, 2, 3, 4, 5], // 平日毎日
-    time: "各25分作業後の5分休憩中"
-  },
-  { 
-    id: "night-exercise", 
-    category: "training",
-    categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "筋トレ・ストレッチ(夜)", 
-    points: 2,
-    days: [1, 2, 3, 4, 5, 6, 7], // 毎日
-    time: "子供が寝たらすぐ"
-  },
-  { 
-    id: "meal-record", 
-    category: "training",
-    categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "食事記録", 
-    points: 1,
-    days: [0, 1, 2, 3, 4, 5, 6], // 毎日
-    time: "各食後"
-  },
-  { 
-    id: "weight-record", 
-    category: "training",
-    categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "体重記録", 
-    points: 1,
-    days: [0, 1, 2, 3, 4, 5, 6], // 毎日
-    time: "入浴後"
-  },
-  // 瞑想
-  { 
-    id: "mindfulness", 
-    category: "mindfulness",
-    categoryLabel: "👁️ マインドフルネス",
-    label: "瞑想", 
-    points: 3,
-    days: [0, 1, 2, 3, 4, 5, 6], // 毎日
-    time: "寝る前"
-  },
-  // レビュー
-  { 
-    id: "daily-reflection", 
-    category: "reflection",
-    categoryLabel: "📝 振り返り",
-    label: "日次レビュー", 
-    points: 1,
-    days: [0, 1, 2, 3, 4, 5, 6], // 毎日
-    time: "就寝前"
-  },
-  { 
-    id: "weekly-reflection", 
-    category: "reflection",
-    categoryLabel: "📝 振り返り",
-    label: "週次レビュー", 
-    points: 5,
-    days: [6], // 日曜日
-    time: "就寝前"
-  },
-  { 
-    id: "monthly-reflection", 
-    category: "reflection",
-    categoryLabel: "📝 振り返り",
-    label: "月次レビュー", 
-    points: 10,
-    days: [6], // 日曜日
-    time: "就寝前"
-  },
-  // 新機能：ビジュアライゼーション
-  { 
-    id: "vision-meditation", 
-    category: "visualization",
-    categoryLabel: "🎯 ビジュアライゼーション",
-    label: "目標イメージング", 
-    points: 3,
-    days: [1, 3, 5], // 月水金
-    time: "朝一番"
-  },
-  // 新機能：セルフトーク
-  { 
-    id: "self-talk", 
-    category: "selftalk",
-    categoryLabel: "💪 セルフトーク",
-    label: "ポジティブセルフトーク", 
-    points: 2,
-    days: [0, 1, 2, 3, 4, 5, 6], // 毎日
-    time: "朝の準備中"
-  }
-];
+// Import constants
+import { TASKS, CATEGORY_COLORS } from '../const/habitConstants';
+import { DEFAULT_SELF_TALK } from '../const/selfTalkConstants';
 
-const CATEGORY_COLORS = {
-  investment: "from-yellow-400 to-orange-500",
-  content: "from-purple-400 to-pink-500",
-  learning: "from-blue-400 to-cyan-500",
-  training: "from-green-400 to-emerald-500",
-  reflection: "from-indigo-400 to-violet-500",
-  visualization: "from-teal-400 to-sky-500",
-  selftalk: "from-rose-400 to-red-500",
-  mindfulness: "from-amber-400 to-yellow-500",
-  planning: "from-slate-400 to-gray-500",
-  motivation: "from-fuchsia-400 to-purple-500",
-  analysis: "from-cyan-400 to-blue-500",
-  wellness: "from-lime-400 to-green-500",
-  creativity: "from-pink-400 to-rose-500",
-  productivity: "from-emerald-400 to-teal-500"
-};
+// Import hooks
+import { useHabitData } from '../hooks/useHabitData';
+import { useAuthentication } from '../hooks/useAuthentication';
+import { useTaskLogic } from '../hooks/useTaskLogic';
 
-// デフォルト目標設定
-// デフォルト目標設定
-const DEFAULT_GOALS = [
-  {
-    "id": "financial-freedom",
-    "title": "経済的自由の達成",
-    "description": "投資とコンテンツ収益で月150万円の不労所得を得る",
-    "targetDate": "2030-06-30",
-    "category": "investment",
-    "progress": 0,
-    "milestones": [
-      { "title": "投資額500万円構築(2026年12月)", "target": 10, "completed": false },
-      { "title": "月5万円の不労所得発生(2027年6月)", "target": 20, "completed": false },
-      { "title": "月20万円の不労所得発生(2028年6月)", "target": 40, "completed": false },
-      { "title": "月60万円の不労所得発生(2029年6月)", "target": 60, "completed": false },
-      { "title": "月100万円の不労所得発生(2030年1月)", "target": 80, "completed": false },
-      { "title": "月150万円安定達成(2030年6月)", "target": 100, "completed": false }
-    ],
-    "okr": {
-      "objective": "",
-      "keyResults": ""
-    },
-    "woop": {
-      "wish": "",
-      "outcome": "",
-      "obstacle": "",
-      "plan": ""
-    }
-  },
-  {
-    "id": "social-influence",
-    "title": "影響力の確立",
-    "description": "SNSで計40万人フォロワーを達成し、経済的成功と社会貢献の基盤を築く",
-    "targetDate": "2028-12-31",
-    "category": "social",
-    "progress": 0,
-    "milestones": [
-      { "title": "SNS運用設計・毎日発信習慣化(2025年9月)", "target": 5, "completed": false },
-      { "title": "フォロワー計1万人達成(2025年12月)", "target": 10, "completed": false },
-      { "title": "計5万人達成(2026年6月)", "target": 25, "completed": false },
-      { "title": "計10万人達成(2026年12月)", "target": 40, "completed": false },
-      { "title": "計20万人達成(2027年12月)", "target": 60, "completed": false },
-      { "title": "計30万人達成(2028年6月)", "target": 80, "completed": false },
-      { "title": "計40万人達成(2028年12月)", "target": 100, "completed": false }
-    ],
-    "okr": {
-      "objective": "SNS運用を戦略的に設計し、毎日発信を無理なく継続できる状態をつくる",
-      "keyResults": "・SNSアカウントのコンセプト・ジャンル・ターゲットを明確にする\n・発信計画（投稿頻度・曜日・時間帯・ネタ帳）を作成\n・2週間連続で投稿継続（未投稿なし）\n・発信後の反応データを毎週チェック・改善1回以上"
-    },
-    "woop": {
-      "wish": "SNSを戦略的に運用し、楽しく・無理なく毎日投稿する",
-      "outcome": "・SNS発信が習慣になり、フォロワーが増え始めることで「自分の言葉に価値が生まれる感覚」を得る\n・投稿するたびに「行動している自分」への自信が深まる",
-      "obstacle": "・忙しさや疲労で「今日はいいか…」と思ってしまう\n・投稿するネタが浮かばない、または「こんなの誰も興味ない」と感じる瞬間がくる",
-      "plan": "・もし「今日はいいか」と思ったら → とにかく1行だけ投稿する（短くてもOKルールにする）\n・もしネタに困ったら → ネタ帳または過去投稿からリサイクルして即興で投稿する\n・もし気が乗らなかったら → 「未来のフォロワーのために積み上げている」と声に出して投稿する"
-    }
-  },
-  {
-    "id": "health-optimization",
-    "title": "最適な身体作り",
-    "description": "理想的な体型と健康状態を維持し続ける",
-    "targetDate": "2025-12-31",
-    "category": "training",
-    "progress": 0,
-    "milestones": [
-      { "title": "習慣の定着(2025年6月)", "target": 25, "completed": false },
-      { "title": "体重64kg達成(2025年8月)", "target": 40, "completed": false },
-      { "title": "体脂肪率20%達成(2025年9月)", "target": 60, "completed": false },
-      { "title": "体脂肪率17%達成(2025年10月)", "target": 80, "completed": false },
-      { "title": "体脂肪率15%達成(2025年11月)", "target": 90, "completed": false },
-      { "title": "理想体型の維持(2025年12月)", "target": 100, "completed": false }
-    ],
-    "okr": {
-      "objective": "",
-      "keyResults": ""
-    },
-    "woop": {
-      "wish": "",
-      "outcome": "",
-      "obstacle": "",
-      "plan": ""
-    }
-  }
-];
-
-// デフォルトセルフトークメッセージ
-const DEFAULT_SELF_TALK = [
-  "太郎、君は今日も確実に目標に向かって前進している",
-  "太郎、君の小さな行動の積み重ねが大きな変化を生む",
-  "太郎、君は成長し続ける人間だ",
-  "太郎、困難は成長のチャンスである",
-  "太郎、君は今この瞬間が未来を作っている",
-  "太郎の努力は必ず報われる",
-  "太郎、君には毎日、新しい可能性に満ちている",
-  "太郎、君は理想の自分に近づいている",
-  "太郎、君はチャレンジすることで強くなる",
-  "太郎、君は今日できることに集中しよう",
-  "太郎、君は仕事じゃなくて、長期の自分に投資してるもいい時間だ",
-  "太郎、今頑張っている時間は未来の自分を助ける重要な時間だ",
-  "太郎、やるべきことがあろうが、順番を決めるのは自分の自由だ",
-  "太郎、失敗は成長途中である証拠だよ",
-  "太郎、今は学びの途中だよ。焦らなくていい。",
-  "太郎、うまくいかない時こそ、成長のチャンスだ",
-  "太郎、失敗することもあるだろうけど、どんな時も自分を見捨てないのが大切だ。",
-];
-
-const REVIEW_TEXT = `・続いたこと
-・サボった理由
-・修正ポイント
-・翌週にやりたい改善`
+// Import components
+import LoadingScreen from '../components/habit/LoadingScreen';
+import AuthLogin from '../components/habit/AuthLogin';
+import TaskProgressSummary from '../components/habit/TaskProgressSummary';
+import SelfTalkBanner from '../components/habit/SelfTalkBanner';
+import TaskItem from '../components/habit/TaskItem';
+import OneTimeTaskInput from '../components/habit/OneTimeTaskInput';
+import OneTimeTaskItem from '../components/habit/OneTimeTaskItem';
+import GoalCard from '../components/habit/GoalCard';
+import GoalEditModal from '../components/habit/GoalEditModal';
+import SelfTalkSection from '../components/habit/SelfTalkSection';
+import SelfTalkModal from '../components/habit/SelfTalkModal';
+import TemplateSection from '../components/habit/TemplateSection';
 
 export default function Home() {
-  const [currentView, setCurrentView] = useState("tasks"); // tasks, goals, selftalk, templates
-  const [points, setPoints] = useState({});
-  const [todayDone, setTodayDone] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [startDate, setStartDate] = useState(null);
-  const [rewardSetting, setRewardSetting] = useState("100ptでラーメンを食べてOK");
+  // Hook imports
+  const habitData = useHabitData();
+  const auth = useAuthentication();
+  const taskLogic = useTaskLogic(
+    habitData.todayDone, 
+    habitData.setPoints, 
+    habitData.setTodayDone, 
+    habitData.oneTimeTasks, 
+    habitData.setOneTimeTasks
+  );
+
+  // Local state
+  const [currentView, setCurrentView] = useState("tasks");
   const [isEditingReward, setIsEditingReward] = useState(false);
   const [tempRewardText, setTempRewardText] = useState("");
   const [showAddTask, setShowAddTask] = useState(false);
-  const [goals, setGoals] = useState(DEFAULT_GOALS);
-  const [selfTalkMessages, setSelfTalkMessages] = useState(DEFAULT_SELF_TALK);
   const [currentSelfTalk, setCurrentSelfTalk] = useState("");
-  
   const [goalFormData, setGoalFormData] = useState(null); 
   const [expandedSection, setExpandedSection] = useState({ goalId: null, type: null });
-
   const [editingGoal, setEditingGoal] = useState(null);
   const [showSelfTalkForm, setShowSelfTalkForm] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [oneTimeTasks, setOneTimeTasks] = useState([]);
-  const [newOneTimeTask, setNewOneTimeTask] = useState("");
-  const [newOneTimeTaskPoints, setNewOneTimeTaskPoints] = useState('3');
-
-  const CORRECT_PASSWORD = "1229"; 
-
-  // 今日の日付と曜日を取得
-  const getTodayString = () => {
-    return new Date().toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\//g, '-');
-  };
-
-  const getTodayDayOfWeek = () => {
-    return new Date().getDay();
-  };
-
-  // 今日やるべきタスクを取得
-  const getTodayTasks = () => {
-    const today = getTodayDayOfWeek();
-    return TASKS.filter(task => task.days.includes(today));
-  };
-
-  // 今日完了したタスクを取得
-  const getCompletedTodayTasks = () => {
-    return TASKS.filter(task => todayDone.includes(task.id));
-  };
-
-  // 追加可能なタスクを取得
-  const getAddableTasks = () => {
-    const todayTaskIds = getTodayTasks().map(task => task.id);
-    return TASKS.filter(task => 
-      !todayTaskIds.includes(task.id) && !todayDone.includes(task.id)
-    );
-  };
-
-  // 開始日からの経過日数を計算
-  const getDayCount = () => {
-    if (!startDate) return 1;
-    const start = new Date(startDate);
-    const today = new Date();
-    const diffTime = today - start;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    return Math.max(1, diffDays);
-  };
 
   // ランダムセルフトークを取得
   const getRandomSelfTalk = () => {
-    return selfTalkMessages[Math.floor(Math.random() * selfTalkMessages.length)];
+    return habitData.selfTalkMessages[Math.floor(Math.random() * habitData.selfTalkMessages.length)];
   };
 
-  // コンポーネントマウント後に読み込み
+  // 初期セルフトーク設定
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedPoints = JSON.parse(localStorage.getItem("habitPoints") || "{}");
-      const storedCompletion = JSON.parse(localStorage.getItem("habitCompletion") || "{}");
-      const storedStartDate = localStorage.getItem("habitStartDate");
-      const storedRewardSetting = localStorage.getItem("habitRewardSetting");
-      const storedGoals = JSON.parse(localStorage.getItem("habitGoals") || "null");
-      const storedSelfTalk = JSON.parse(localStorage.getItem("habitSelfTalk") || "null");
-      const today = getTodayString();
-      const storedOneTimeTasks = JSON.parse(localStorage.getItem("habitOneTimeTasks") || "[]"); // 👈 ここに追加
-      setOneTimeTasks(storedOneTimeTasks);
-      
-      setPoints(storedPoints);
-      
-      if (storedRewardSetting) {
-        setRewardSetting(storedRewardSetting);
-      }
-      
-      if (storedGoals) {
-        setGoals(storedGoals);
-      }
-      
-      if (storedSelfTalk) {
-        setSelfTalkMessages(storedSelfTalk);
-      }
-      
-      if (storedStartDate) {
-        setStartDate(storedStartDate);
-      } else {
-        localStorage.setItem("habitStartDate", today);
-        setStartDate(today);
-      }
-      
-      if (storedCompletion.date === today) {
-        setTodayDone(storedCompletion.completed || []);
-      }
-      
-      // 今日のセルフトークを設定
+    if (habitData.isLoaded) {
       setCurrentSelfTalk(getRandomSelfTalk());
-      
-      setIsLoaded(true);
     }
-  }, []);
+  }, [habitData.isLoaded]);
 
-  // データ保存
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("habitPoints", JSON.stringify(points));
+  // 目標の進捗更新
+  const updateGoalProgress = (goalId, newProgress) => {
+    habitData.setGoals(prev => prev.map(goal => 
+      goal.id === goalId 
+        ? { ...goal, progress: Math.max(0, Math.min(100, newProgress)) }
+        : goal
+    ));
+  };
+
+  // セルフトークメッセージ追加
+  const addSelfTalkMessage = (message) => {
+    if (message.trim() && !habitData.selfTalkMessages.includes(message.trim())) {
+      habitData.setSelfTalkMessages(prev => [...prev, message.trim()]);
     }
-  }, [points, isLoaded]);
+  };
 
-  useEffect(() => {
-    if (isLoaded) {
-      const today = getTodayString();
-      const completionData = { date: today, completed: todayDone };
-      localStorage.setItem("habitCompletion", JSON.stringify(completionData));
-    }
-  }, [todayDone, isLoaded]);
+  // セルフトークメッセージ削除
+  const removeSelfTalkMessage = (index) => {
+    habitData.setSelfTalkMessages(prev => prev.filter((_, i) => i !== index));
+  };
 
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("habitRewardSetting", rewardSetting);
-    }
-  }, [rewardSetting, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("habitGoals", JSON.stringify(goals));
-    }
-  }, [goals, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("habitSelfTalk", JSON.stringify(selfTalkMessages));
-    }
-  }, [selfTalkMessages, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("habitOneTimeTasks", JSON.stringify(oneTimeTasks));
-    }
-  }, [oneTimeTasks, isLoaded]);
-
-  // 既存のuseEffectの後に以下を追加
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const authStatus = localStorage.getItem("habitAuthStatus");
-      if (authStatus === "authenticated") {
-        setIsAuthenticated(true);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (editingGoal) {
-      // フォームのデータとして編集対象の目標をディープコピーしてセット
-      setGoalFormData(JSON.parse(JSON.stringify(editingGoal)));
-    } else {
-      setGoalFormData(null);
-    }
-  }, [editingGoal]);
-
-
-  // 🔽 OKR/WOOPの表示を切り替える関数
+  // OKR/WOOPの表示を切り替える関数
   const toggleSection = (goalId, type) => {
     setExpandedSection(prev => {
-      // すでに開いているセクションを再度クリックした場合は閉じる
       if (prev.goalId === goalId && prev.type === type) {
         return { goalId: null, type: null };
       }
-      // 新しいセクションを開く
       return { goalId, type };
     });
   };
 
-
-  // 🔽 編集フォームの入力値を処理する関数
+  // 編集フォームの入力値を処理する関数
   const handleGoalFormChange = (e) => {
     const { name, value } = e.target;
-    // 'okr.objective' のようなネストしたname属性を処理
     if (name.includes('.')) {
         const [section, field] = name.split('.');
         setGoalFormData(prev => ({
@@ -487,51 +110,32 @@ export default function Home() {
     }
   };
 
-  // 🔽 編集内容を保存する関数
+  // 編集内容を保存する関数
   const handleUpdateGoal = (e) => {
       e.preventDefault();
-      setGoals(prevGoals =>
+      habitData.setGoals(prevGoals =>
           prevGoals.map(goal => (goal.id === goalFormData.id ? goalFormData : goal))
       );
-      setEditingGoal(null); // モーダルを閉じる
+      setEditingGoal(null);
   };
 
-  // パスワード検証関数
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    if (passwordInput === CORRECT_PASSWORD) {
-      setIsAuthenticated(true);
-      localStorage.setItem("habitAuthStatus", "authenticated");
-      setPasswordError("");
+  // 編集時のフォームデータ設定
+  useEffect(() => {
+    if (editingGoal) {
+      setGoalFormData(JSON.parse(JSON.stringify(editingGoal)));
     } else {
-      setPasswordError("パスワードが正しくありません");
-      setPasswordInput("");
+      setGoalFormData(null);
     }
-  };
+  }, [editingGoal]);
 
-  // ログアウト関数
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("habitAuthStatus");
-    setPasswordInput("");
-    setPasswordError("");
-  };
-
-  const handleComplete = (taskId) => {
-    if (todayDone.includes(taskId)) return;
-    const task = TASKS.find(t => t.id === taskId);
-    const pointsToAdd = task ? task.points : 1;
-    setPoints((prev) => ({ ...prev, [taskId]: (prev[taskId] || 0) + pointsToAdd }));
-    setTodayDone((prev) => [...prev, taskId]);
-  };
-
+  // ご褒美設定関数
   const startEditingReward = () => {
-    setTempRewardText(rewardSetting);
+    setTempRewardText(habitData.rewardSetting);
     setIsEditingReward(true);
   };
 
   const saveRewardSetting = () => {
-    setRewardSetting(tempRewardText);
+    habitData.setRewardSetting(tempRewardText);
     setIsEditingReward(false);
   };
 
@@ -540,89 +144,24 @@ export default function Home() {
     setIsEditingReward(false);
   };
 
-  const handleAddOneTimeTask = () => {
-    // textareaの値を改行で分割してタスクの配列を作成
-    const taskLines = newOneTimeTask.trim().split('\n');
-
-    // 入力が空、またはスペースのみの場合は処理を終了
-    if (taskLines.length === 0 || taskLines[0] === '') {
-        setNewOneTimeTask("");
-        return;
-    }
-
-    // バッチで追加されるタスクすべてに適用するポイントを解析
-    const points = parseInt(newOneTimeTaskPoints, 10);
-    const pointsToAdd = !isNaN(points) && points > 0 ? points : 1;
-
-    const newTasks = taskLines
-        .map(line => line.trim()) // 各行の空白を削除
-        .filter(line => line !== "") // 空の行を除外
-        .map((line, index) => ({
-            id: `one-time-${Date.now()}-${index}`, // バッチ内でもユニークなIDを生成
-            text: line,
-            points: pointsToAdd,
-            completed: false
-        }));
-
-    // 作成されたタスクが1つ以上ある場合のみステートを更新
-    if (newTasks.length > 0) {
-        setOneTimeTasks(prev => [...newTasks, ...prev]);
-        setNewOneTimeTask("");
-        setNewOneTimeTaskPoints('3'); // 入力欄をリセット
-    }
-  };
-
-  const handleCompleteOneTimeTask = (taskId) => {
-    if (todayDone.includes(taskId)) return;
-    const task = oneTimeTasks.find(t => t.id === taskId);
-    if (!task) return;
-
-    setPoints(prev => ({ ...prev, [taskId]: (prev[taskId] || 0) + task.points }));
-    setTodayDone(prev => [...prev, taskId]);
-  };
-
-  const handleDeleteOneTimeTask = (taskId) => {
-    setOneTimeTasks(prev => prev.filter(t => t.id !== taskId));
-  };
-
-  // 目標の進捗更新
-  const updateGoalProgress = (goalId, newProgress) => {
-    setGoals(prev => prev.map(goal => 
-      goal.id === goalId 
-        ? { ...goal, progress: Math.max(0, Math.min(100, newProgress)) }
-        : goal
-    ));
-  };
-
-  // セルフトークメッセージ追加
-  const addSelfTalkMessage = (message) => {
-    if (message.trim() && !selfTalkMessages.includes(message.trim())) {
-      setSelfTalkMessages(prev => [...prev, message.trim()]);
-    }
-  };
-
-  // セルフトークメッセージ削除
-  const removeSelfTalkMessage = (index) => {
-    setSelfTalkMessages(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const totalPoints = Object.values(points).reduce((sum, v) => sum + v, 0);
-  const todayTasks = getTodayTasks();
-  const completedTodayTasks = getCompletedTodayTasks();
-  const addableTasks = getAddableTasks();
+  // Computed values
+  const totalPoints = Object.values(habitData.points).reduce((sum, v) => sum + v, 0);
+  const todayTasks = taskLogic.getTodayTasks();
+  const completedTodayTasks = taskLogic.getCompletedTodayTasks();
+  const addableTasks = taskLogic.getAddableTasks();
   
   const todayPoints = completedTodayTasks.reduce((sum, task) => sum + task.points, 0);
   
   const completionRate = todayTasks.length > 0 
-    ? Math.round((todayTasks.filter(task => todayDone.includes(task.id)).length / todayTasks.length) * 100)
+    ? Math.round((todayTasks.filter(task => habitData.todayDone.includes(task.id)).length / todayTasks.length) * 100)
     : 0;
 
-  const dayCount = getDayCount();
+  const dayCount = habitData.getDayCount();
 
   // SNS用テキスト生成
   const generateShareText = () => {
     const completedTasksText = completedTodayTasks.map(task => 
-      `✅ ${task.label}`//（+${task.points}pt）`
+      `✅ ${task.label}`
     );
     
     let shareText = `Day${dayCount}\n`;
@@ -631,7 +170,6 @@ export default function Home() {
       shareText += completedTasksText.join('\n') + '\n';
     }
     
-    //shareText += `🎯 今日の合計：${todayPoints}pt\n`;
     shareText += `📈 累計ポイント：${totalPoints}pt\n`;
     shareText += `💪 "${currentSelfTalk}"\n`;
     shareText += `#日々コツコツ #習慣化 #目標達成 #習慣ログ `;
@@ -641,65 +179,12 @@ export default function Home() {
 
   const shareText = generateShareText();
 
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="animate-pulse">
-          <div className="w-16 h-16 bg-white/20 rounded-full mb-4 mx-auto"></div>
-          <div className="text-white text-xl">読み込み中...</div>
-        </div>
-      </div>
-    );
+  if (!habitData.isLoaded) {
+    return <LoadingScreen />;
   }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center px-4">
-        <div className="max-w-md w-full">
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-3xl">
-              🔒
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-2">習慣化アプリ</h1>
-            <p className="text-purple-200">パスワードを入力してください</p>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
-            <form onSubmit={handlePasswordSubmit} className="space-y-6">
-              <div>
-                <input
-                  type="password"
-                  value={passwordInput}
-                  onChange={(e) => setPasswordInput(e.target.value)}
-                  className="w-full p-4 bg-white/20 border border-white/30 rounded-2xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent text-center text-lg"
-                  placeholder="パスワードを入力"
-                  autoFocus
-                />
-                {passwordError && (
-                  <p className="text-red-300 text-sm mt-2 text-center animate-pulse">
-                    ❌ {passwordError}
-                  </p>
-                )}
-              </div>
-              
-              <button
-                type="submit"
-                disabled={!passwordInput.trim()}
-                className="w-full py-4 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-2xl font-bold text-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                🚪 ログイン
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-purple-200 text-xs">
-                ✨ あなただけの習慣化の記録を守ります
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  if (!auth.isAuthenticated) {
+    return <AuthLogin />;
   }
 
   return (
@@ -708,7 +193,7 @@ export default function Home() {
         {/* ヘッダー */}
         <div className="text-center mb-6 pt-4 relative">
           <button
-            onClick={handleLogout}
+            onClick={auth.handleLogout}
             className="absolute top-0 right-0 text-purple-200 hover:text-white transition-colors text-sm bg-white/10 px-3 py-1 rounded-full border border-white/20 hover:bg-white/20"
           >
             🚪 ログアウト
@@ -746,51 +231,18 @@ export default function Home() {
 
         {currentView === "tasks" && (
           <>
-            {/* 進捗サマリー */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 mb-6 border border-white/20 shadow-2xl">
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-white">{totalPoints}</div>
-                  <div className="text-purple-200 text-xs">累計pt</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-300">{todayPoints}</div>
-                  <div className="text-purple-200 text-xs">今日pt</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-300">{completionRate}%</div>
-                  <div className="text-purple-200 text-xs">達成率</div>
-                </div>
-              </div>
-              
-              <div className="relative">
-                <div className="w-full bg-white/20 rounded-full h-2 mb-2">
-                  <div 
-                    className="bg-gradient-to-r from-pink-400 to-purple-500 h-2 rounded-full transition-all duration-700 ease-out"
-                    style={{ width: `${completionRate}%` }}
-                  />
-                </div>
-                <div className="text-purple-200 text-xs text-center">
-                  {todayTasks.filter(task => todayDone.includes(task.id)).length} / {todayTasks.length} タスク完了
-                </div>
-              </div>
-            </div>
+            <TaskProgressSummary 
+              totalPoints={totalPoints}
+              todayPoints={todayPoints}
+              completionRate={completionRate}
+              todayTasks={todayTasks}
+              todayDone={habitData.todayDone}
+            />
 
-            {/* セルフトークバナー */}
-            <div className="bg-gradient-to-r from-rose-400/20 to-red-500/20 backdrop-blur-xl rounded-2xl p-4 mb-6 border border-rose-300/30">
-              <div className="text-center">
-                <div className="text-xs text-rose-200 mb-1">今日のセルフトーク</div>
-                <div className="text-white font-medium text-sm leading-relaxed">
-                  💫 "{currentSelfTalk}"
-                </div>
-                <button
-                  onClick={() => setCurrentSelfTalk(getRandomSelfTalk())}
-                  className="mt-2 text-xs text-rose-300 hover:text-rose-200 transition-colors"
-                >
-                  🔄 別のメッセージ
-                </button>
-              </div>
-            </div>
+            <SelfTalkBanner 
+              currentSelfTalk={currentSelfTalk}
+              onRefresh={() => setCurrentSelfTalk(getRandomSelfTalk())}
+            />
 
             {/* 今日のタスク */}
             {todayTasks.length > 0 && (
@@ -801,40 +253,14 @@ export default function Home() {
                 </h2>
                 <div className="space-y-3">
                   {todayTasks.map((task) => {
-                    const isCompleted = todayDone.includes(task.id);
+                    const isCompleted = habitData.todayDone.includes(task.id);
                     return (
-                      <div
+                      <TaskItem
                         key={task.id}
-                        className={`group bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 transition-all duration-300 ${
-                          isCompleted 
-                            ? 'opacity-70 bg-green-500/10 border-green-400/30' 
-                            : 'hover:bg-white/15 hover:scale-[1.02] hover:shadow-xl'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-xs font-medium text-purple-200 bg-white/10 px-2 py-1 rounded-full">
-                                {task.categoryLabel}
-                              </span>
-                              <span className="text-yellow-300 text-xs font-bold">+{task.points}pt</span>
-                            </div>
-                            <h3 className="text-white font-medium text-sm leading-tight mb-2">{task.label}</h3>
-                            <div className="text-purple-200 text-xs">⏰ {task.time}</div>
-                          </div>
-                          <button
-                            onClick={() => handleComplete(task.id)}
-                            disabled={isCompleted}
-                            className={`ml-3 flex-shrink-0 w-12 h-12 rounded-full font-semibold text-xs transition-all duration-200 flex items-center justify-center ${
-                              isCompleted
-                                ? "bg-green-500/30 text-green-200 cursor-not-allowed"
-                                : `bg-gradient-to-r ${CATEGORY_COLORS[task.category]} hover:shadow-lg hover:scale-110 text-white shadow-lg`
-                            }`}
-                          >
-                            {isCompleted ? "✓" : "完了"}
-                          </button>
-                        </div>
-                      </div>
+                        task={task}
+                        isCompleted={isCompleted}
+                        onComplete={taskLogic.handleComplete}
+                      />
                     );
                   })}
                 </div>
@@ -860,29 +286,12 @@ export default function Home() {
                 {showAddTask && (
                   <div className="space-y-3">
                     {addableTasks.map((task) => (
-                      <div
+                      <TaskItem
                         key={task.id}
-                        className="group bg-white/5 backdrop-blur-xl rounded-2xl p-4 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-xs font-medium text-purple-300 bg-white/5 px-2 py-1 rounded-full">
-                                {task.categoryLabel}
-                              </span>
-                              <span className="text-yellow-400 text-xs font-bold">+{task.points}pt</span>
-                            </div>
-                            <h3 className="text-white/90 font-medium text-sm leading-tight mb-2">{task.label}</h3>
-                            <div className="text-purple-300 text-xs">⏰ {task.time}</div>
-                          </div>
-                          <button
-                            onClick={() => handleComplete(task.id)}
-                            className={`ml-3 flex-shrink-0 w-12 h-12 rounded-full text-xs transition-all duration-200 flex items-center justify-center bg-gradient-to-r ${CATEGORY_COLORS[task.category]} hover:shadow-lg hover:scale-110 text-white shadow-lg opacity-80 hover:opacity-100`}
-                          >
-                            追加
-                          </button>
-                        </div>
-                      </div>
+                        task={task}
+                        isCompleted={false}
+                        onComplete={taskLogic.handleComplete}
+                      />
                     ))}
                   </div>
                 )}
@@ -895,63 +304,22 @@ export default function Home() {
                 <div className="w-3 h-3 bg-gradient-to-r from-lime-400 to-green-500 rounded-full mr-2"></div>
                 単発タスク
               </h2>
-              {/* Input form */}
-              <div className="flex gap-2 mb-4 items-start">
-                <textarea
-                  value={newOneTimeTask}
-                  onChange={(e) => setNewOneTimeTask(e.target.value)}
-                  placeholder="タスクを改行で区切って複数入力できます。&#10;例：&#10;・買い物に行く&#10;・XXさんに電話する"
-                  className="flex-1 p-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400 h-24 resize-y"
-                />
-                <div className="flex flex-col gap-2 shrink-0">
-                  <input
-                    type="number"
-                    value={newOneTimeTaskPoints}
-                    onChange={(e) => setNewOneTimeTaskPoints(e.target.value)}
-                    className="w-24 p-3 bg-white/20 border border-white/30 rounded-xl text-white text-center placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                    placeholder="各pt"
-                    min="1"
-                  />
-                  <button
-                    onClick={handleAddOneTimeTask}
-                    disabled={!newOneTimeTask.trim()}
-                    className="w-24 py-3 bg-gradient-to-r from-lime-400 to-green-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    一括追加
-                  </button>
-                </div>
-              </div>
-              {/* Task list */}
+              
+              <OneTimeTaskInput onAddTask={taskLogic.handleAddOneTimeTask} />
+              
               <div className="space-y-3">
-                {oneTimeTasks.filter(task => !todayDone.includes(task.id)).map((task) => (
-                  <div key={task.id} className="group bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 transition-all hover:bg-white/15">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0 mr-3">
-                        <h3 className="text-white font-medium text-sm leading-tight mb-1">{task.text}</h3>
-                        <span className="text-yellow-300 text-xs font-bold">+{task.points}pt</span>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <button
-                          onClick={() => handleCompleteOneTimeTask(task.id)}
-                          className="w-12 h-12 rounded-full font-semibold text-xs transition-all duration-200 flex items-center justify-center bg-gradient-to-r from-green-400 to-emerald-500 hover:shadow-lg hover:scale-110 text-white shadow-lg"
-                        >
-                          完了
-                        </button>
-                        <button
-                          onClick={() => handleDeleteOneTimeTask(task.id)}
-                          className="w-8 h-8 rounded-full font-semibold text-xs transition-all duration-200 flex items-center justify-center bg-red-500/50 hover:bg-red-500/80 text-white opacity-50 group-hover:opacity-100"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                {habitData.oneTimeTasks.filter(task => !habitData.todayDone.includes(task.id)).map((task) => (
+                  <OneTimeTaskItem
+                    key={task.id}
+                    task={task}
+                    onComplete={taskLogic.handleCompleteOneTimeTask}
+                    onDelete={taskLogic.handleDeleteOneTimeTask}
+                  />
                 ))}
               </div>
             </div>
 
             {/* 完了済みタスク */}
-            
             {completedTodayTasks.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-white font-semibold mb-4 flex items-center">
@@ -970,7 +338,7 @@ export default function Home() {
                       </div>
                     </div>
                   ))}
-                  {oneTimeTasks.filter(task => todayDone.includes(task.id)).map((task) => (
+                  {habitData.oneTimeTasks.filter(task => habitData.todayDone.includes(task.id)).map((task) => (
                     <div
                       key={task.id}
                       className="bg-green-500/10 backdrop-blur-xl rounded-xl p-3 border border-green-400/20"
@@ -1018,7 +386,7 @@ export default function Home() {
               ) : (
                 <div className="flex items-center justify-between">
                   <p className="text-purple-200 text-sm flex items-center">
-                    🪙 {rewardSetting} ✨
+                    🪙 {habitData.rewardSetting} ✨
                   </p>
                   <button
                     onClick={startEditingReward}
@@ -1047,365 +415,51 @@ export default function Home() {
 
         {currentView === "goals" && (
           <div className="space-y-6">
-            {/* 目標一覧 */}
             <div className="space-y-4">
-              {goals.map((goal) => (
-                <div
+              {habitData.goals.map((goal) => (
+                <GoalCard
                   key={goal.id}
-                  className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl transition-all duration-300"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-white font-bold text-lg mb-2">{goal.title}</h3>
-                      <p className="text-purple-200 text-sm mb-3">{goal.description}</p>
-                      <div className="flex items-center gap-4 text-xs text-purple-300">
-                        <span>📅 {goal.targetDate}</span>
-                        <span className={`px-2 py-1 rounded-full bg-gradient-to-r ${CATEGORY_COLORS[goal.category] || CATEGORY_COLORS['investment']} text-white`}>
-                          {TASKS.find(t => t.category === goal.category)?.categoryLabel || "🎯"}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setEditingGoal(goal)}
-                      className="text-cyan-300 hover:text-cyan-200 transition-colors text-lg p-2"
-                    >
-                      ✏️
-                    </button>
-                  </div>
-
-                  {/* 進捗バー */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-white text-sm font-semibold">進捗: {goal.progress}%</span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => updateGoalProgress(goal.id, goal.progress - 5)}
-                          className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full text-white text-sm transition-all"
-                        >
-                          -
-                        </button>
-                        <button
-                          onClick={() => updateGoalProgress(goal.id, goal.progress + 5)}
-                          className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full text-white text-sm transition-all"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <div className="w-full bg-white/20 rounded-full h-3">
-                      <div
-                        className={`bg-gradient-to-r ${CATEGORY_COLORS[goal.category]} h-3 rounded-full transition-all duration-700 ease-out`}
-                        style={{ width: `${goal.progress}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* マイルストーン */}
-                  <div className="space-y-2 mb-4">
-                    <h4 className="text-white text-sm font-semibold mb-2">マイルストーン</h4>
-                    {goal.milestones.map((milestone, index) => (
-                      <div
-                        key={index}
-                        className={`flex items-center justify-between p-3 rounded-xl ${
-                          goal.progress >= milestone.target
-                            ? 'bg-green-500/20 border border-green-400/30'
-                            : 'bg-white/5 border border-white/10'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                            goal.progress >= milestone.target
-                              ? 'bg-green-500 text-white'
-                              : 'bg-white/20 text-purple-200'
-                          }`}>
-                            {goal.progress >= milestone.target ? '✓' : index + 1}
-                          </div>
-                          <span className={`text-sm ${
-                            goal.progress >= milestone.target ? 'text-green-200' : 'text-white'
-                          }`}>
-                            {milestone.title}
-                          </span>
-                        </div>
-                        <span className="text-xs text-purple-300">{milestone.target}%</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* OKR / WOOP 表示切り替え */}
-                  <div className="flex gap-2 mt-4 border-t border-white/10 pt-4">
-                    <button onClick={() => toggleSection(goal.id, 'okr')} className={`flex-1 py-2 text-sm rounded-lg transition-all ${expandedSection.goalId === goal.id && expandedSection.type === 'okr' ? 'bg-teal-500 text-white shadow-lg' : 'bg-white/10 text-purple-200 hover:bg-white/20'}`}>
-                      🎯 OKR
-                    </button>
-                    <button onClick={() => toggleSection(goal.id, 'woop')} className={`flex-1 py-2 text-sm rounded-lg transition-all ${expandedSection.goalId === goal.id && expandedSection.type === 'woop' ? 'bg-rose-500 text-white shadow-lg' : 'bg-white/10 text-purple-200 hover:bg-white/20'}`}>
-                      🧠 WOOP
-                    </button>
-                  </div>
-
-                  {/* OKR / WOOP 詳細表示エリア */}
-                  {expandedSection.goalId === goal.id && (
-                    <div className="mt-4 p-4 bg-black/20 rounded-xl">
-                      {expandedSection.type === 'okr' && goal.okr && (
-                        <div className="space-y-3">
-                          <h4 className="font-bold text-white">🎯 OKR</h4>
-                          <div>
-                            <h5 className="font-semibold text-purple-200 text-sm">Objective (目的)</h5>
-                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.okr.objective || "未設定"}</p>
-                          </div>
-                          <div>
-                            <h5 className="font-semibold text-purple-200 text-sm">Key Results (成果指標)</h5>
-                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.okr.keyResults || "未設定"}</p>
-                          </div>
-                        </div>
-                      )}
-                      {expandedSection.type === 'woop' && goal.woop && (
-                        <div className="space-y-3">
-                          <h4 className="font-bold text-white">🧠 WOOP</h4>
-                          <div>
-                            <h5 className="font-semibold text-purple-200 text-sm">Wish (望み)</h5>
-                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.woop.wish || "未設定"}</p>
-                          </div>
-                          <div>
-                            <h5 className="font-semibold text-purple-200 text-sm">Outcome (結果)</h5>
-                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.woop.outcome || "未設定"}</p>
-                          </div>
-                          <div>
-                            <h5 className="font-semibold text-purple-200 text-sm">Obstacle (障害)</h5>
-                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.woop.obstacle || "未設定"}</p>
-                          </div>
-                          <div>
-                            <h5 className="font-semibold text-purple-200 text-sm">Plan (計画)</h5>
-                            <p className="text-white whitespace-pre-wrap text-sm p-2 mt-1 bg-white/5 rounded-md">{goal.woop.plan || "未設定"}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
+                  goal={goal}
+                  onEdit={setEditingGoal}
+                  onUpdateProgress={updateGoalProgress}
+                  expandedSection={expandedSection}
+                  onToggleSection={toggleSection}
+                />
               ))}
             </div>
           </div>
         )}
 
         {currentView === "selftalk" && (
-          <div className="space-y-6">
-            {/* 今日のセルフトーク */}
-            <div className="bg-gradient-to-r from-rose-400/20 to-red-500/20 backdrop-blur-xl rounded-3xl p-6 border border-rose-300/30 text-center">
-              <h2 className="text-white font-bold text-xl mb-4">今日のマインドセット</h2>
-              <div className="text-white text-lg font-medium leading-relaxed mb-4 p-4 bg-white/10 rounded-2xl">
-                "💫 {currentSelfTalk}"
-              </div>
-              <button
-                onClick={() => setCurrentSelfTalk(getRandomSelfTalk())}
-                className="bg-gradient-to-r from-rose-400 to-red-500 text-white px-6 py-2 rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
-              >
-                🔄 新しいメッセージ
-              </button>
-            </div>
-
-            {/* セルフトーク一覧 */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-white font-semibold flex items-center">
-                  <div className="w-3 h-3 bg-gradient-to-r from-rose-400 to-red-500 rounded-full mr-2"></div>
-                  セルフトークメッセージ
-                </h2>
-                <button
-                  onClick={() => setShowSelfTalkForm(true)}
-                  className="text-rose-300 hover:text-rose-200 transition-colors text-sm"
-                >
-                  + 追加
-                </button>
-              </div>
-
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {selfTalkMessages.map((message, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start justify-between p-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all group"
-                  >
-                    <p className="text-white text-sm leading-relaxed flex-1 mr-3">
-                      "{message}"
-                    </p>
-                    <button
-                      onClick={() => removeSelfTalkMessage(index)}
-                      className="text-rose-300 hover:text-rose-200 opacity-0 group-hover:opacity-100 transition-all text-xs"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* モチベーション統計 */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20">
-              <h3 className="text-white font-semibold mb-3">モチベーション統計</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-rose-300">{selfTalkMessages.length}</div>
-                  <div className="text-purple-200 text-xs">メッセージ数</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-300">{dayCount}</div>
-                  <div className="text-purple-200 text-xs">継続日数</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SelfTalkSection
+            currentSelfTalk={currentSelfTalk}
+            onRefresh={() => setCurrentSelfTalk(getRandomSelfTalk())}
+            selfTalkMessages={habitData.selfTalkMessages}
+            onAddMessage={addSelfTalkMessage}
+            onRemoveMessage={removeSelfTalkMessage}
+            onShowForm={() => setShowSelfTalkForm(true)}
+            dayCount={dayCount}
+          />
         )}
 
-        {/* テンプレート */}
-        {currentView === "templates" && (
-          <div className="space-y-6">
- 
-            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
-              <h2 className="text-white font-semibold mb-3 flex items-center">
-                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2"></div>
-                レビュー用テキスト
-              </h2>
-              <textarea
-                value={REVIEW_TEXT}
-                className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-                readOnly
-              />
-            </div>
-            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
-              <h2 className="text-white font-semibold mb-3 flex items-center">
-                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2"></div>
-                ビジュアライゼーション（成果イメージ）
-              </h2>
-              <textarea
-                value="「私はもうすでに経済的自由を手にしている。月150万円以上の不労所得が安定して入り、家族と笑顔で過ごす日常に心から感謝している。SNSでは多くの人に影響を与え、『ありがとう』『あなたのおかげで人生が変わった』と言われるたびに胸が熱くなり、誇りを感じる。朝のウッドデッキで伸びをしたときに感じる太陽の暖かさとともに、私は確かな自由と充実感を味わっている。この生き方を選んだことに、心の底から満足している。」"
-                className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-                readOnly
-              />
-            </div>
-            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
-              <h2 className="text-white font-semibold mb-3 flex items-center">
-                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-2"></div>
-                ビジュアライゼーション（プロセスイメージ）
-              </h2>
-              <textarea
-                value="「私は毎朝、わくわくした気持ちで今日のやるべきことに取り組む。仕事も最速で、完璧に仕上げている。余った時間を自分の能力向上に使っている。新しい知識に触れるたびに好奇心が刺激され、SNSで自分の考えを発信するたびに小さな達成感が湧く。失敗しても、『これも自分を成長させる経験だ』と笑い飛ばす余裕がある。この積み重ねの先に待っている理想の未来を思うと、自然と力が湧いてくる。」"
-                className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white text-sm h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-                readOnly
-              />
-            </div>
-          </div>
-        )}
-
+        {currentView === "templates" && <TemplateSection />}
 
         {/* 目標追加/編集フォーム */}
         {editingGoal && goalFormData && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-gradient-to-br from-indigo-900 to-purple-900 backdrop-blur-xl rounded-3xl p-6 border border-white/20 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <form onSubmit={handleUpdateGoal}>
-                <h2 className="text-white font-bold text-xl mb-4">
-                  目標を編集
-                </h2>
-                <div className="space-y-4">
-                  {/* 基本情報 */}
-                  <div>
-                    <label className="text-purple-200 text-sm mb-1 block">目標タイトル</label>
-                    <input name="title" value={goalFormData.title} onChange={handleGoalFormChange} type="text" className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-400" />
-                  </div>
-                  <div>
-                    <label className="text-purple-200 text-sm mb-1 block">詳細説明</label>
-                    <textarea name="description" value={goalFormData.description} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-20 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
-                  </div>
-                  
-                  {/* OKR */}
-                  <div className="border-t border-white/10 pt-4 mt-4">
-                      <h3 className="text-lg font-bold text-white mb-2">🎯 OKR</h3>
-                      <div>
-                        <label className="text-purple-200 text-sm mb-1 block">Objective (目的)</label>
-                        <textarea name="okr.objective" value={goalFormData.okr.objective} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-20 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="目標達成によって実現したい状態を入力" />
-                      </div>
-                      <div className="mt-4">
-                        <label className="text-purple-200 text-sm mb-1 block">Key Results (成果指標)</label>
-                        <textarea name="okr.keyResults" value={goalFormData.okr.keyResults} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-28 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="・成果指標1&#10;・成果指標2" />
-                      </div>
-                  </div>
-
-                  {/* WOOP */}
-                  <div className="border-t border-white/10 pt-4 mt-4">
-                      <h3 className="text-lg font-bold text-white mb-2">🧠 WOOP</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-purple-200 text-sm mb-1 block">Wish (望み)</label>
-                            <textarea name="woop.wish" value={goalFormData.woop.wish} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
-                          </div>
-                          <div>
-                            <label className="text-purple-200 text-sm mb-1 block">Outcome (結果)</label>
-                            <textarea name="woop.outcome" value={goalFormData.woop.outcome} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
-                          </div>
-                          <div>
-                            <label className="text-purple-200 text-sm mb-1 block">Obstacle (障害)</label>
-                            <textarea name="woop.obstacle" value={goalFormData.woop.obstacle} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
-                          </div>
-                          <div>
-                            <label className="text-purple-200 text-sm mb-1 block">Plan (計画)</label>
-                            <textarea name="woop.plan" value={goalFormData.woop.plan} onChange={handleGoalFormChange} className="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white h-24 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400" />
-                          </div>
-                      </div>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3 mt-6">
-                  <button
-                    type="button"
-                    onClick={() => setEditingGoal(null)}
-                    className="flex-1 py-3 bg-white/20 text-white rounded-xl font-semibold hover:bg-white/30 transition-all"
-                  >
-                    キャンセル
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-3 bg-gradient-to-r from-teal-400 to-sky-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
-                  >
-                    更新
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <GoalEditModal
+            goalFormData={goalFormData}
+            onFormChange={handleGoalFormChange}
+            onSubmit={handleUpdateGoal}
+            onCancel={() => setEditingGoal(null)}
+          />
         )}
 
         {/* セルフトーク追加フォーム */}
         {showSelfTalkForm && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 max-w-md w-full">
-              <h2 className="text-white font-bold text-xl mb-4">新しいセルフトーク</h2>
-              <div className="space-y-4">
-                <textarea
-                  className="w-full p-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400 h-24 resize-none"
-                  placeholder="ポジティブなセルフトークメッセージを入力してください"
-                  id="newSelfTalk"
-                />
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowSelfTalkForm(false)}
-                    className="flex-1 py-3 bg-white/20 text-white rounded-xl font-semibold hover:bg-white/30 transition-all"
-                  >
-                    キャンセル
-                  </button>
-                  <button
-                    onClick={() => {
-                      const textarea = document.getElementById('newSelfTalk');
-                      if (textarea.value.trim()) {
-                        addSelfTalkMessage(textarea.value);
-                        textarea.value = '';
-                      }
-                      setShowSelfTalkForm(false);
-                    }}
-                    className="flex-1 py-3 bg-gradient-to-r from-rose-400 to-red-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
-                  >
-                    追加
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SelfTalkModal
+            onClose={() => setShowSelfTalkForm(false)}
+            onAdd={addSelfTalkMessage}
+          />
         )}
       </div>
     </div>
