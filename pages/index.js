@@ -6,8 +6,8 @@ import { TASKS, CATEGORY_COLORS } from '../const/habitConstants';
 import { DEFAULT_SELF_TALK } from '../const/selfTalkConstants';
 
 // Import hooks
-import { useHabitData } from '../hooks/useHabitData';
-import { useAuthentication } from '../hooks/useAuthentication';
+import { useFirebaseData } from '../hooks/useFirebaseData';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import { useTaskLogic } from '../hooks/useTaskLogic';
 
 // Import components
@@ -26,8 +26,8 @@ import TemplateSection from '../components/habit/TemplateSection';
 
 export default function Home() {
   // Hook imports
-  const habitData = useHabitData();
-  const auth = useAuthentication();
+  const auth = useFirebaseAuth();
+  const habitData = useFirebaseData(auth.user?.uid);
   const taskLogic = useTaskLogic(
     habitData.todayDone, 
     habitData.setPoints, 
@@ -179,12 +179,12 @@ export default function Home() {
 
   const shareText = generateShareText();
 
-  if (!habitData.isLoaded) {
+  if (auth.loading || !habitData.isLoaded) {
     return <LoadingScreen />;
   }
 
   if (!auth.isAuthenticated) {
-    return <AuthLogin />;
+    return <AuthLogin auth={auth} />;
   }
 
   return (
