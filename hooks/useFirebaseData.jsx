@@ -108,45 +108,115 @@ export const useFirebaseData = (userId) => {
   useEffect(() => {
     if (userId) {
       loadDataFromFirestore();
+    } else {
+      // userIdがない場合（Firebaseが利用できない場合）は元のlocalStorage方式を使用
+      console.log('useFirebaseData: No userId, falling back to localStorage');
+      loadDataFromLocalStorage();
     }
   }, [userId]);
 
+  // LocalStorageからのデータ読み込み（フォールバック）
+  const loadDataFromLocalStorage = () => {
+    if (typeof window !== 'undefined') {
+      const storedPoints = JSON.parse(localStorage.getItem("habitPoints") || "{}");
+      const storedCompletion = JSON.parse(localStorage.getItem("habitCompletion") || "{}");
+      const storedStartDate = localStorage.getItem("habitStartDate");
+      const storedRewardSetting = localStorage.getItem("habitRewardSetting");
+      const storedGoals = JSON.parse(localStorage.getItem("habitGoals") || "null");
+      const storedSelfTalk = JSON.parse(localStorage.getItem("habitSelfTalk") || "null");
+      const storedOneTimeTasks = JSON.parse(localStorage.getItem("habitOneTimeTasks") || "[]");
+      const today = getTodayString();
+      
+      setPoints(storedPoints);
+      setOneTimeTasks(storedOneTimeTasks);
+      
+      if (storedRewardSetting) {
+        setRewardSetting(storedRewardSetting);
+      }
+      
+      if (storedGoals) {
+        setGoals(storedGoals);
+      }
+      
+      if (storedSelfTalk) {
+        setSelfTalkMessages(storedSelfTalk);
+      }
+      
+      if (storedStartDate) {
+        setStartDate(storedStartDate);
+      } else {
+        localStorage.setItem("habitStartDate", today);
+        setStartDate(today);
+      }
+      
+      if (storedCompletion.date === today) {
+        setTodayDone(storedCompletion.completed || []);
+      }
+      
+      setIsLoaded(true);
+    }
+  };
+
   // データ保存のuseEffect
   useEffect(() => {
-    if (isLoaded && userId) {
-      saveDataToFirestore('points', points);
+    if (isLoaded) {
+      if (userId) {
+        saveDataToFirestore('points', points);
+      } else {
+        localStorage.setItem("habitPoints", JSON.stringify(points));
+      }
     }
   }, [points, isLoaded, userId]);
 
   useEffect(() => {
-    if (isLoaded && userId) {
+    if (isLoaded) {
       const today = getTodayString();
       const completionData = { date: today, completed: todayDone };
-      saveDataToFirestore('completionData', completionData);
+      if (userId) {
+        saveDataToFirestore('completionData', completionData);
+      } else {
+        localStorage.setItem("habitCompletion", JSON.stringify(completionData));
+      }
     }
   }, [todayDone, isLoaded, userId]);
 
   useEffect(() => {
-    if (isLoaded && userId) {
-      saveDataToFirestore('rewardSetting', rewardSetting);
+    if (isLoaded) {
+      if (userId) {
+        saveDataToFirestore('rewardSetting', rewardSetting);
+      } else {
+        localStorage.setItem("habitRewardSetting", rewardSetting);
+      }
     }
   }, [rewardSetting, isLoaded, userId]);
 
   useEffect(() => {
-    if (isLoaded && userId) {
-      saveDataToFirestore('goals', goals);
+    if (isLoaded) {
+      if (userId) {
+        saveDataToFirestore('goals', goals);
+      } else {
+        localStorage.setItem("habitGoals", JSON.stringify(goals));
+      }
     }
   }, [goals, isLoaded, userId]);
 
   useEffect(() => {
-    if (isLoaded && userId) {
-      saveDataToFirestore('selfTalkMessages', selfTalkMessages);
+    if (isLoaded) {
+      if (userId) {
+        saveDataToFirestore('selfTalkMessages', selfTalkMessages);
+      } else {
+        localStorage.setItem("habitSelfTalk", JSON.stringify(selfTalkMessages));
+      }
     }
   }, [selfTalkMessages, isLoaded, userId]);
 
   useEffect(() => {
-    if (isLoaded && userId) {
-      saveDataToFirestore('oneTimeTasks', oneTimeTasks);
+    if (isLoaded) {
+      if (userId) {
+        saveDataToFirestore('oneTimeTasks', oneTimeTasks);
+      } else {
+        localStorage.setItem("habitOneTimeTasks", JSON.stringify(oneTimeTasks));
+      }
     }
   }, [oneTimeTasks, isLoaded, userId]);
 

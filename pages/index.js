@@ -13,6 +13,7 @@ import { useTaskLogic } from '../hooks/useTaskLogic';
 // Import components
 import LoadingScreen from '../components/habit/LoadingScreen';
 import AuthLogin from '../components/habit/AuthLogin';
+import DataMigrationModal from '../components/habit/DataMigrationModal';
 import TaskProgressSummary from '../components/habit/TaskProgressSummary';
 import SelfTalkBanner from '../components/habit/SelfTalkBanner';
 import TaskItem from '../components/habit/TaskItem';
@@ -23,6 +24,7 @@ import GoalEditModal from '../components/habit/GoalEditModal';
 import SelfTalkSection from '../components/habit/SelfTalkSection';
 import SelfTalkModal from '../components/habit/SelfTalkModal';
 import TemplateSection from '../components/habit/TemplateSection';
+import BackupRestoreSection from '../components/habit/BackupRestoreSection';
 
 export default function Home() {
   // Hook imports
@@ -39,6 +41,8 @@ export default function Home() {
   // Local state
   const [currentView, setCurrentView] = useState("tasks");
   const [isEditingReward, setIsEditingReward] = useState(false);
+  const [showMigration, setShowMigration] = useState(false);
+  const [migrationCompleted, setMigrationCompleted] = useState(false);
   const [tempRewardText, setTempRewardText] = useState("");
   const [showAddTask, setShowAddTask] = useState(false);
   const [currentSelfTalk, setCurrentSelfTalk] = useState("");
@@ -179,12 +183,56 @@ export default function Home() {
 
   const shareText = generateShareText();
 
+  // 移行チェックのuseEffect
+  useEffect(() => {
+    if (auth.isAuthenticated && auth.user && habitData.isLoaded && !migrationCompleted) {
+      const migrationKey = `migration-completed-${auth.user.uid}`;
+      const completed = localStorage.getItem(migrationKey);
+      
+      if (!completed) {
+        setShowMigration(true);
+      } else {
+        setMigrationCompleted(true);
+      }
+    }
+  }, [auth.isAuthenticated, auth.user, habitData.isLoaded, migrationCompleted]);
+
+  const handleMigrationComplete = () => {
+    if (auth.user) {
+      const migrationKey = `migration-completed-${auth.user.uid}`;
+      localStorage.setItem(migrationKey, 'true');
+    }
+    setShowMigration(false);
+    setMigrationCompleted(true);
+    // データを再読み込み
+    window.location.reload();
+  };
+
+  const handleMigrationSkip = () => {
+    if (auth.user) {
+      const migrationKey = `migration-completed-${auth.user.uid}`;
+      localStorage.setItem(migrationKey, 'true');
+    }
+    setShowMigration(false);
+    setMigrationCompleted(true);
+  };
+
   if (auth.loading || !habitData.isLoaded) {
     return <LoadingScreen />;
   }
 
   if (!auth.isAuthenticated) {
     return <AuthLogin auth={auth} />;
+  }
+
+  if (showMigration) {
+    return (
+      <DataMigrationModal
+        userId={auth.user?.uid}
+        onComplete={handleMigrationComplete}
+        onSkip={handleMigrationSkip}
+      />
+    );
   }
 
   return (
@@ -213,7 +261,8 @@ export default function Home() {
             { key: "tasks", label: "📋 タスク", icon: "📋" },
             { key: "goals", label: "🎯 目標", icon: "🎯" },
             { key: "selftalk", label: "💪 マインド", icon: "💪" },
-            { key: "templates", label: "📝 メモ", icon: "📝"}
+            { key: "templates", label: "📝 メモ", icon: "📝"},
+            { key: "settings", label: "⚙️ 設定", icon: "⚙️"}
           ].map(({ key, label, icon }) => (
             <button
               key={key}
@@ -453,6 +502,34 @@ export default function Home() {
         )}
 
         {currentView === "templates" && <TemplateSection />}
+
+        {currentView === "settings" && (
+          <div className="space-y-6">
+            <BackupRestoreSection userId={auth.user?.uid} />
+            
+            {/* その他の設定 */}
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
+              <h2 className="text-white font-semibold mb-4 flex items-center">
+                <div className="w-3 h-3 bg-gradient-to-r from-gray-400 to-slate-500 rounded-full mr-2"></div>
+                アプリケーション情報
+              </h2>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-purple-200">バージョン</span>
+                  <span className="text-white">v2.0.0 (Firebase統合版)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-purple-200">データ保存</span>
+                  <span className="text-white">{auth.user ? 'Firebase Firestore' : 'LocalStorage'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-purple-200">ユーザーID</span>
+                  <span className="text-white text-xs">{auth.user?.uid || '未認証'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 目標追加/編集フォーム */}
         {editingGoal && goalFormData && (

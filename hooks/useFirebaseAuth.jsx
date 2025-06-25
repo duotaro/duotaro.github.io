@@ -12,16 +12,27 @@ export const useFirebaseAuth = () => {
 
   // Firebase Auth状態の監視
   useEffect(() => {
+    console.log('useFirebaseAuth: Starting auth state monitoring', { auth: !!auth });
+    
     if (!auth) {
+      console.log('useFirebaseAuth: No auth instance, checking localStorage for fallback');
+      // Firebaseが利用できない場合のフォールバック
+      const passwordAuthStatus = localStorage.getItem("habitPasswordAuth");
+      if (passwordAuthStatus === "authenticated") {
+        setIsAuthenticated(true);
+      }
       setLoading(false);
       return;
     }
 
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      console.log('useFirebaseAuth: Auth state changed', { user: !!firebaseUser });
+      
       if (firebaseUser) {
         setUser(firebaseUser);
         // パスワード認証状態をチェック
         const passwordAuthStatus = localStorage.getItem("habitPasswordAuth");
+        console.log('useFirebaseAuth: Password auth status', passwordAuthStatus);
         if (passwordAuthStatus === "authenticated") {
           setIsAuthenticated(true);
         }
@@ -38,18 +49,31 @@ export const useFirebaseAuth = () => {
   // パスワード検証関数
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
+    console.log('useFirebaseAuth: Password submit attempt');
+    
     if (passwordInput === CORRECT_PASSWORD) {
       try {
+        console.log('useFirebaseAuth: Password correct, attempting Firebase auth', { auth: !!auth, user: !!user });
+        
         // パスワードが正しい場合、匿名認証でFirebaseにサインイン
         if (auth && !user) {
+          console.log('useFirebaseAuth: Signing in anonymously...');
           await signInAnonymously(auth);
+          console.log('useFirebaseAuth: Anonymous sign-in successful');
+        } else if (!auth) {
+          console.log('useFirebaseAuth: No Firebase auth available, using fallback');
         }
+        
         setIsAuthenticated(true);
         localStorage.setItem("habitPasswordAuth", "authenticated");
         setPasswordError("");
       } catch (error) {
         console.error('Authentication error:', error);
-        setPasswordError("認証エラーが発生しました");
+        // Firebaseエラーの場合でもローカル認証は通す
+        setIsAuthenticated(true);
+        localStorage.setItem("habitPasswordAuth", "authenticated");
+        setPasswordError("");
+        console.log('useFirebaseAuth: Using fallback authentication due to Firebase error');
       }
     } else {
       setPasswordError("パスワードが正しくありません");

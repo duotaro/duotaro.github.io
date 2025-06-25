@@ -6,7 +6,11 @@
       "Bash(rm:*)",
       "Bash(git checkout:*)",
       "Bash(npm install:*)",
-      "Bash(git add .)"
+      "Bash(git add .)",
+      "Bash(git commit:*)",
+      "Bash(npm run dev:*)",
+      "Bash(pkill:*)",
+      "Bash(true)"
     ],
     "deny": []
   }
