@@ -40,7 +40,9 @@ export const useFirebaseAuth = () => {
         
         // UIDを表示（Firestoreルールで設定が必要）
         console.log('✅ Firebase authentication successful');
-        console.log('Note: Firestore access depends on rules configuration');
+        console.log('⚠️ IMPORTANT: Add this UID to Firestore rules allowedUIDs list:');
+        console.log('UID:', firebaseUser.uid);
+        console.log('Project:', 'habit-tracker-app-1f70f');
         
         // パスワード認証状態をチェック
         const passwordAuthStatus = localStorage.getItem("habitPasswordAuth");
