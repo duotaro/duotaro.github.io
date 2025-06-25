@@ -33,17 +33,9 @@ export const useFirebaseAuth = () => {
         // UID を表示（Firestoreルール設定用）
         console.log('🔑 Your Firebase UID for Firestore rules:', firebaseUser.uid);
         
-        // 許可されたUIDと一致するかチェック
-        const allowedUIDs = ['mJEUNOImvIXI68aCdAvqn7LCWnq1'];
-        if (!allowedUIDs.includes(firebaseUser.uid)) {
-          console.error('⚠️ WARNING: Current UID is NOT in allowed list!');
-          console.error('Current UID:', firebaseUser.uid);
-          console.error('Allowed UIDs:', allowedUIDs);
-          console.error('You will NOT be able to read/write data with this UID.');
-          alert(`⚠️ UID不一致警告\n\n現在のUID: ${firebaseUser.uid}\n許可されたUID: ${allowedUIDs[0]}\n\nFirestoreへの読み書きができません。\nブラウザのデータをクリアして再度ログインしてください。`);
-        } else {
-          console.log('✅ UID matches allowed list - Firestore access granted');
-        }
+        // UIDを表示（Firestoreルールで設定が必要）
+        console.log('✅ Firebase authentication successful');
+        console.log('Note: Firestore access depends on rules configuration');
         
         // パスワード認証状態をチェック
         const passwordAuthStatus = localStorage.getItem("habitPasswordAuth");
