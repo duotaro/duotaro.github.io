@@ -48,22 +48,77 @@ export const TASKS = [
     days: [2, 4], // 火曜・木曜
     time: "SNSに投稿後"
   },
-  // トレーニング
+  // トレーニング（ポモドーロ）
   { 
-    id: "pomodoro-exercise", 
+    id: "pomodoro-pushups", 
     category: "training",
     categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "筋トレ・ストレッチ(ポモドーロ)", 
+    label: "腕立て（ポモドーロ）", 
     points: 2,
+    days: [1, 3, 5], // 月水金
+    time: "各25分作業後の5分休憩中"
+  },
+  { 
+    id: "pomodoro-squats", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "スクワット（ポモドーロ）", 
+    points: 1,
     days: [1, 2, 3, 4, 5], // 平日毎日
     time: "各25分作業後の5分休憩中"
   },
   { 
-    id: "night-exercise", 
+    id: "pomodoro-abs", 
     category: "training",
     categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "筋トレ・ストレッチ(夜)", 
+    label: "腹筋（ポモドーロ）", 
+    points: 1,
+    days: [1, 2, 3, 4, 5], // 平日毎日
+    time: "各25分作業後の5分休憩中"
+  },
+  { 
+    id: "pomodoro-lower-stretch", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "下半身ストレッチ（ポモドーロ）", 
+    points: 1,
+    days: [1, 2, 3, 4, 5], // 平日毎日
+    time: "各25分作業後の5分休憩中"
+  },
+  // トレーニング（夜）
+  { 
+    id: "night-pushups", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "腕立て（夜）", 
     points: 2,
+    days: [1, 3, 5], // 月水金
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "night-hiit", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "HIIT（夜）", 
+    points: 2,
+    days: [2, 4, 6], // 火木土
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "night-abs", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "腹筋（夜）", 
+    points: 1,
+    days: [1, 2, 3, 4, 5, 6, 7], // 毎日
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "night-upper-stretch", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "肩・背中ストレッチ（夜）", 
+    points: 1,
     days: [1, 2, 3, 4, 5, 6, 7], // 毎日
     time: "子供が寝たらすぐ"
   },
