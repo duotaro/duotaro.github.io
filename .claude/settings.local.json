@@ -16,7 +16,10 @@
       "Bash(touch:*)",
       "Bash(firebase:*)",
       "Bash(ls:*)",
-      "Bash(git filter-branch:*)"
+      "Bash(git filter-branch:*)",
+      "Bash(java:*)",
+      "Bash(curl:*)",
+      "Bash(git gc:*)"
     ],
     "deny": []
   }
