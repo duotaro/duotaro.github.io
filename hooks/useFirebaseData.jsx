@@ -127,11 +127,18 @@ export const useFirebaseData = (userId) => {
 
   // 初期データ読み込み
   useEffect(() => {
+    console.log('🔍 useFirebaseData Debug:');
+    console.log('- userId:', userId);
+    console.log('- db available:', !!db);
+    console.log('- Firebase initialized:', !!db && !!auth);
+    
     if (userId) {
+      console.log('🔥 Using Firestore for data storage');
       loadDataFromFirestore();
     } else {
       // userIdがない場合（Firebaseが利用できない場合）は元のlocalStorage方式を使用
-      console.log('useFirebaseData: No userId, falling back to localStorage');
+      console.log('📱 useFirebaseData: No userId, falling back to localStorage');
+      console.log('📱 Reason: Firebase not available or user not authenticated');
       loadDataFromLocalStorage();
     }
   }, [userId]);

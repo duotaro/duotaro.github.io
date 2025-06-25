@@ -12,13 +12,18 @@ export const useFirebaseAuth = () => {
 
   // Firebase Auth状態の監視
   useEffect(() => {
-    console.log('useFirebaseAuth: Starting auth state monitoring', { auth: !!auth });
+    console.log('🔍 useFirebaseAuth Debug:');
+    console.log('- Auth instance available:', !!auth);
+    console.log('- Window available:', typeof window !== 'undefined');
+    console.log('- API Key set:', !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
     
     if (!auth) {
-      console.log('useFirebaseAuth: No auth instance, checking localStorage for fallback');
+      console.log('⚠️ useFirebaseAuth: No auth instance, checking localStorage for fallback');
+      console.log('⚠️ Reason: Firebase not initialized or environment variables missing');
       // Firebaseが利用できない場合のフォールバック
       const passwordAuthStatus = localStorage.getItem("habitPasswordAuth");
       if (passwordAuthStatus === "authenticated") {
+        console.log('📱 Using localStorage fallback authentication');
         setIsAuthenticated(true);
       }
       setLoading(false);
