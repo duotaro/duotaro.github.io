@@ -9,6 +9,7 @@ import { DEFAULT_SELF_TALK } from '../const/selfTalkConstants';
 import { useFirebaseData } from '../hooks/useFirebaseData';
 import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 import { useTaskLogic } from '../hooks/useTaskLogic';
+import { useUserIdManager } from '../hooks/useUserIdManager';
 
 // Import components
 import LoadingScreen from '../components/habit/LoadingScreen';
@@ -25,11 +26,16 @@ import SelfTalkSection from '../components/habit/SelfTalkSection';
 import SelfTalkModal from '../components/habit/SelfTalkModal';
 import TemplateSection from '../components/habit/TemplateSection';
 import BackupRestoreSection from '../components/habit/BackupRestoreSection';
+import UserIdSection from '../components/habit/UserIdSection';
 
 export default function Home() {
   // Hook imports
   const auth = useFirebaseAuth();
-  const habitData = useFirebaseData(auth.user?.uid);
+  const userIdManager = useUserIdManager();
+  
+  // 実際に使用するユーザーIDを決定
+  const effectiveUserId = userIdManager.getEffectiveUserId(auth.user?.uid);
+  const habitData = useFirebaseData(effectiveUserId);
   const taskLogic = useTaskLogic(
     habitData.todayDone, 
     habitData.setPoints, 
@@ -185,8 +191,8 @@ export default function Home() {
 
   // 移行チェックのuseEffect
   useEffect(() => {
-    if (auth.isAuthenticated && auth.user && habitData.isLoaded && !migrationCompleted) {
-      const migrationKey = `migration-completed-${auth.user.uid}`;
+    if (auth.isAuthenticated && effectiveUserId && habitData.isLoaded && !migrationCompleted) {
+      const migrationKey = `migration-completed-${effectiveUserId}`;
       const completed = localStorage.getItem(migrationKey);
       
       if (!completed) {
@@ -195,11 +201,11 @@ export default function Home() {
         setMigrationCompleted(true);
       }
     }
-  }, [auth.isAuthenticated, auth.user, habitData.isLoaded, migrationCompleted]);
+  }, [auth.isAuthenticated, effectiveUserId, habitData.isLoaded, migrationCompleted]);
 
   const handleMigrationComplete = () => {
-    if (auth.user) {
-      const migrationKey = `migration-completed-${auth.user.uid}`;
+    if (effectiveUserId) {
+      const migrationKey = `migration-completed-${effectiveUserId}`;
       localStorage.setItem(migrationKey, 'true');
     }
     setShowMigration(false);
@@ -209,8 +215,8 @@ export default function Home() {
   };
 
   const handleMigrationSkip = () => {
-    if (auth.user) {
-      const migrationKey = `migration-completed-${auth.user.uid}`;
+    if (effectiveUserId) {
+      const migrationKey = `migration-completed-${effectiveUserId}`;
       localStorage.setItem(migrationKey, 'true');
     }
     setShowMigration(false);
@@ -228,7 +234,7 @@ export default function Home() {
   if (showMigration) {
     return (
       <DataMigrationModal
-        userId={auth.user?.uid}
+        userId={effectiveUserId}
         onComplete={handleMigrationComplete}
         onSkip={handleMigrationSkip}
       />
@@ -505,7 +511,9 @@ export default function Home() {
 
         {currentView === "settings" && (
           <div className="space-y-6">
-            <BackupRestoreSection userId={auth.user?.uid} />
+            <UserIdSection firebaseUserId={auth.user?.uid} />
+            
+            <BackupRestoreSection userId={effectiveUserId} />
             
             {/* その他の設定 */}
             <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
@@ -523,8 +531,12 @@ export default function Home() {
                   <span className="text-white">{auth.user ? 'Firebase Firestore' : 'LocalStorage'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-purple-200">ユーザーID</span>
-                  <span className="text-white text-xs">{auth.user?.uid || '未認証'}</span>
+                  <span className="text-purple-200">現在のユーザーID</span>
+                  <span className="text-white text-xs">{effectiveUserId || '未認証'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-purple-200">認証方式</span>
+                  <span className="text-white text-xs">{userIdManager.isUsingCustomId ? 'カスタムID' : 'Firebase匿名認証'}</span>
                 </div>
               </div>
             </div>
