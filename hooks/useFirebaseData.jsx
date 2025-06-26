@@ -9,6 +9,7 @@ export const useFirebaseData = (userId) => {
   const [todayDone, setTodayDone] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true); // 初回読み込み中フラグ
+  const [useFirestore, setUseFirestore] = useState(true); // Firestoreの使用状態
   const [startDate, setStartDate] = useState(null);
   const [rewardSetting, setRewardSetting] = useState("100ptでラーメンを食べてOK");
   const [goals, setGoals] = useState(DEFAULT_GOALS);
@@ -45,6 +46,19 @@ export const useFirebaseData = (userId) => {
       localStorage.removeItem("habitSelfTalk");
       localStorage.removeItem("habitOneTimeTasks");
       console.log('🧹 LocalStorage data cleared - using Firestore only');
+    }
+  };
+
+  // LocalStorageにデータを保存
+  const saveDataToLocalStorage = (field, value) => {
+    if (typeof window !== 'undefined') {
+      try {
+        const key = `habit${field.charAt(0).toUpperCase() + field.slice(1).replace('Data', '')}`;
+        localStorage.setItem(key, JSON.stringify(value));
+        console.log(`✅ Successfully saved ${field} to localStorage`);
+      } catch (error) {
+        console.error(`❌ Error saving ${field} to localStorage:`, error);
+      }
     }
   };
 
@@ -122,6 +136,7 @@ export const useFirebaseData = (userId) => {
       
       // Firestoreを使用する場合、LocalStorageをクリア
       clearLocalStorageData();
+      setUseFirestore(true);
       
       setIsLoaded(true);
       setIsInitialLoad(false); // 初回読み込み完了
@@ -130,6 +145,7 @@ export const useFirebaseData = (userId) => {
       
       // Firestoreエラーの場合はLocalStorageにフォールバック
       console.warn('📱 Firestore access failed, falling back to localStorage');
+      setUseFirestore(false);
       loadDataFromLocalStorage();
       return;
     }
@@ -166,6 +182,7 @@ export const useFirebaseData = (userId) => {
       loadDataFromFirestore();
     } else {
       console.log('📱 Using localStorage fallback');
+      setUseFirestore(false);
       loadDataFromLocalStorage();
     }
   }, [userId]);
@@ -221,6 +238,7 @@ export const useFirebaseData = (userId) => {
         console.log('📅 No LocalStorage completion data for today, starting fresh');
       }
       
+      setUseFirestore(false);
       setIsLoaded(true);
       setIsInitialLoad(false); // 初回読み込み完了
     }
@@ -228,7 +246,7 @@ export const useFirebaseData = (userId) => {
 
   // データ保存のuseEffect
   useEffect(() => {
-    if (isLoaded && !isInitialLoad && userId) { // Firestoreのみ保存
+    if (isLoaded && !isInitialLoad) {
       console.log('💾 Attempting to save points:', points);
       console.log('💾 Points object keys:', Object.keys(points));
       
@@ -237,46 +255,72 @@ export const useFirebaseData = (userId) => {
       const totalPoints = Object.values(points).reduce((sum, val) => sum + (typeof val === 'number' ? val : 0), 0);
       
       if (pointsCount > 0 && totalPoints > 0) {
-        console.log(`💾 Saving valid points (${pointsCount} items, ${totalPoints} total) to Firestore`);
-        saveDataToFirestore('points', points);
+        if (useFirestore && userId) {
+          console.log(`💾 Saving valid points (${pointsCount} items, ${totalPoints} total) to Firestore`);
+          saveDataToFirestore('points', points);
+        } else {
+          console.log(`💾 Saving valid points (${pointsCount} items, ${totalPoints} total) to localStorage`);
+          saveDataToLocalStorage('points', points);
+        }
       } else {
         console.log(`⏭️ Skipping invalid points (${pointsCount} items, ${totalPoints} total)`);
       }
     }
-  }, [points, isLoaded, isInitialLoad, userId]);
+  }, [points, isLoaded, isInitialLoad, useFirestore, userId]);
 
   useEffect(() => {
-    if (isLoaded && !isInitialLoad && userId) { // Firestoreのみ保存
+    if (isLoaded && !isInitialLoad) {
       const today = getTodayString();
       const completionData = { date: today, completed: todayDone };
       console.log('💾 Saving completion data:', completionData);
-      saveDataToFirestore('completionData', completionData);
+      
+      if (useFirestore && userId) {
+        saveDataToFirestore('completionData', completionData);
+      } else {
+        saveDataToLocalStorage('completionData', completionData);
+      }
     }
-  }, [todayDone, isLoaded, isInitialLoad, userId]);
+  }, [todayDone, isLoaded, isInitialLoad, useFirestore, userId]);
 
   useEffect(() => {
-    if (isLoaded && !isInitialLoad && userId) { // Firestoreのみ保存
-      saveDataToFirestore('rewardSetting', rewardSetting);
+    if (isLoaded && !isInitialLoad) {
+      if (useFirestore && userId) {
+        saveDataToFirestore('rewardSetting', rewardSetting);
+      } else {
+        saveDataToLocalStorage('rewardSetting', rewardSetting);
+      }
     }
-  }, [rewardSetting, isLoaded, isInitialLoad, userId]);
+  }, [rewardSetting, isLoaded, isInitialLoad, useFirestore, userId]);
 
   useEffect(() => {
-    if (isLoaded && !isInitialLoad && userId) { // Firestoreのみ保存
-      saveDataToFirestore('goals', goals);
+    if (isLoaded && !isInitialLoad) {
+      if (useFirestore && userId) {
+        saveDataToFirestore('goals', goals);
+      } else {
+        saveDataToLocalStorage('goals', goals);
+      }
     }
-  }, [goals, isLoaded, isInitialLoad, userId]);
+  }, [goals, isLoaded, isInitialLoad, useFirestore, userId]);
 
   useEffect(() => {
-    if (isLoaded && !isInitialLoad && userId) { // Firestoreのみ保存
-      saveDataToFirestore('selfTalkMessages', selfTalkMessages);
+    if (isLoaded && !isInitialLoad) {
+      if (useFirestore && userId) {
+        saveDataToFirestore('selfTalkMessages', selfTalkMessages);
+      } else {
+        saveDataToLocalStorage('selfTalkMessages', selfTalkMessages);
+      }
     }
-  }, [selfTalkMessages, isLoaded, isInitialLoad, userId]);
+  }, [selfTalkMessages, isLoaded, isInitialLoad, useFirestore, userId]);
 
   useEffect(() => {
-    if (isLoaded && !isInitialLoad && userId) { // Firestoreのみ保存
-      saveDataToFirestore('oneTimeTasks', oneTimeTasks);
+    if (isLoaded && !isInitialLoad) {
+      if (useFirestore && userId) {
+        saveDataToFirestore('oneTimeTasks', oneTimeTasks);
+      } else {
+        saveDataToLocalStorage('oneTimeTasks', oneTimeTasks);
+      }
     }
-  }, [oneTimeTasks, isLoaded, isInitialLoad, userId]);
+  }, [oneTimeTasks, isLoaded, isInitialLoad, useFirestore, userId]);
 
   return {
     // State

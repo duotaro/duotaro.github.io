@@ -22,7 +22,8 @@
       "Bash(git gc:*)",
       "Bash(grep:*)",
       "Bash(rg:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(python3:*)"
     ],
     "deny": []
   }
