@@ -209,12 +209,15 @@ export const useFirebaseData = (userId) => {
       console.log('💾 Attempting to save points:', points);
       console.log('💾 Points object keys:', Object.keys(points));
       
-      // 空のオブジェクトは保存しない
-      if (Object.keys(points).length > 0) {
-        console.log('💾 Saving non-empty points to Firestore');
+      // 空のオブジェクトは保存しない + 最小ポイント数チェック
+      const pointsCount = Object.keys(points).length;
+      const totalPoints = Object.values(points).reduce((sum, val) => sum + (typeof val === 'number' ? val : 0), 0);
+      
+      if (pointsCount > 0 && totalPoints > 0) {
+        console.log(`💾 Saving valid points (${pointsCount} items, ${totalPoints} total) to Firestore`);
         saveDataToFirestore('points', points);
       } else {
-        console.log('⏭️ Skipping empty points object');
+        console.log(`⏭️ Skipping invalid points (${pointsCount} items, ${totalPoints} total)`);
       }
     }
   }, [points, isLoaded, isInitialLoad, userId]);

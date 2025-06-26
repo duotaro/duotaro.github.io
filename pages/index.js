@@ -225,6 +225,67 @@ export default function Home() {
     setMigrationCompleted(true);
   };
 
+  // 緊急復元機能
+  const handleRestorePoints = async () => {
+    if (!effectiveUserId) {
+      alert('ユーザーIDが見つかりません');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      '本番環境のポイントデータを復元します。現在のポイントデータは上書きされます。続行しますか？'
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const restorePointsData = {
+        "daily-reflection": 19,
+        "future-tech-study": 17,
+        "meal-record": 22,
+        "mindfulness": 24,
+        "night-exercise": 63,
+        "note-writing": 3,
+        "one-time-1750259184966-0": 5,
+        "one-time-1750405853696-0": 5,
+        "one-time-1750514399046-0": 3,
+        "one-time-1750811849092-0": 3,
+        "one-time-1750814295995-0": 3,
+        "one-time-1750814460044-0": 3,
+        "one-time-1750816979074-0": 3,
+        "orderflow-study": 38,
+        "pomodoro-abs": 1,
+        "pomodoro-exercise": 38,
+        "pomodoro-lower-stretch": 1,
+        "pomodoro-pushups": 2,
+        "pomodoro-squats": 1,
+        "self-talk": 42,
+        "sns-post": 9,
+        "training": 2,
+        "vision-meditation": 30,
+        "weekly-reflection": 10,
+        "weight-record": 21
+      };
+
+      // Firestoreに直接書き込み
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const { db } = await import('../lib/firebase');
+      
+      const userDocRef = doc(db, 'habitData', effectiveUserId);
+      await updateDoc(userDocRef, { points: restorePointsData });
+      
+      // ローカル状態も更新
+      habitData.setPoints(restorePointsData);
+      
+      alert('✅ ポイントデータが正常に復元されました！');
+      console.log('復元されたデータ:', restorePointsData);
+      
+    } catch (error) {
+      console.error('復元エラー:', error);
+      alert('❌ 復元に失敗しました: ' + error.message);
+    }
+  };
+
   if (auth.loading || !habitData.isLoaded || userAuth.isCheckingAuth) {
     return <LoadingScreen />;
   }
@@ -516,6 +577,23 @@ export default function Home() {
         {currentView === "settings" && (
           <div className="space-y-6">
             <BackupRestoreSection userId={effectiveUserId} />
+            
+            {/* 緊急復元セクション */}
+            <div className="bg-red-500/10 backdrop-blur-xl rounded-2xl p-5 border border-red-400/20 shadow-xl">
+              <h2 className="text-white font-semibold mb-4 flex items-center">
+                <div className="w-3 h-3 bg-gradient-to-r from-red-400 to-orange-500 rounded-full mr-2"></div>
+                緊急復元
+              </h2>
+              <p className="text-red-200 text-sm mb-4">
+                ⚠️ 本番環境のポイントデータが失われた場合の一時的な復元機能です
+              </p>
+              <button
+                onClick={handleRestorePoints}
+                className="w-full py-3 bg-gradient-to-r from-red-400 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
+              >
+                🔧 ポイントデータを復元
+              </button>
+            </div>
             
             {/* その他の設定 */}
             <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 shadow-xl">
