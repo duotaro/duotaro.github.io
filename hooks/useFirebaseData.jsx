@@ -81,10 +81,20 @@ export const useFirebaseData = (userId) => {
         }
         
         // 今日の完了状況をチェック
+        console.log('🔍 Checking completion data:', {
+          hasCompletionData: !!data.completionData,
+          savedDate: data.completionData?.date,
+          todayDate: today,
+          dateMatch: data.completionData?.date === today,
+          completedTasks: data.completionData?.completed
+        });
+        
         if (data.completionData && data.completionData.date === today) {
-          setTodayDone(data.completionData.completed || []);
-          console.log('✅ Today\'s completed tasks loaded:', data.completionData.completed);
+          const completedTasks = data.completionData.completed || [];
+          setTodayDone(completedTasks);
+          console.log('✅ Today\'s completed tasks loaded:', completedTasks);
         } else {
+          setTodayDone([]);
           console.log('📅 No completion data for today, starting fresh');
         }
       } else {
@@ -194,8 +204,21 @@ export const useFirebaseData = (userId) => {
         setStartDate(today);
       }
       
-      if (storedCompletion.date === today) {
-        setTodayDone(storedCompletion.completed || []);
+      console.log('🔍 LocalStorage completion check:', {
+        hasStoredCompletion: !!storedCompletion,
+        storedDate: storedCompletion?.date,
+        todayDate: today,
+        dateMatch: storedCompletion?.date === today,
+        completedTasks: storedCompletion?.completed
+      });
+      
+      if (storedCompletion && storedCompletion.date === today) {
+        const completedTasks = storedCompletion.completed || [];
+        setTodayDone(completedTasks);
+        console.log('✅ LocalStorage completed tasks loaded:', completedTasks);
+      } else {
+        setTodayDone([]);
+        console.log('📅 No LocalStorage completion data for today, starting fresh');
       }
       
       setIsLoaded(true);
@@ -226,6 +249,7 @@ export const useFirebaseData = (userId) => {
     if (isLoaded && !isInitialLoad && userId) { // Firestoreのみ保存
       const today = getTodayString();
       const completionData = { date: today, completed: todayDone };
+      console.log('💾 Saving completion data:', completionData);
       saveDataToFirestore('completionData', completionData);
     }
   }, [todayDone, isLoaded, isInitialLoad, userId]);

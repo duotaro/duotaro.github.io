@@ -21,7 +21,8 @@
       "Bash(curl:*)",
       "Bash(git gc:*)",
       "Bash(grep:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(node:*)"
     ],
     "deny": []
   }

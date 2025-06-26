@@ -27,11 +27,19 @@ export const useTaskLogic = (todayDone, setPoints, setTodayDone, oneTimeTasks, s
 
   // タスク完了処理
   const handleComplete = (taskId) => {
-    if (todayDone.includes(taskId)) return;
+    if (todayDone.includes(taskId)) {
+      console.log('⚠️ Task already completed today:', taskId);
+      return;
+    }
     const task = TASKS.find(t => t.id === taskId);
     const pointsToAdd = task ? task.points : 1;
+    console.log('✅ Completing task:', { taskId, points: pointsToAdd, taskName: task?.text });
     setPoints((prev) => ({ ...prev, [taskId]: (prev[taskId] || 0) + pointsToAdd }));
-    setTodayDone((prev) => [...prev, taskId]);
+    setTodayDone((prev) => {
+      const newCompleted = [...prev, taskId];
+      console.log('📝 Updated todayDone:', newCompleted);
+      return newCompleted;
+    });
   };
 
   // 単発タスク追加
@@ -65,12 +73,23 @@ export const useTaskLogic = (todayDone, setPoints, setTodayDone, oneTimeTasks, s
 
   // 単発タスク完了
   const handleCompleteOneTimeTask = (taskId) => {
-    if (todayDone.includes(taskId)) return;
+    if (todayDone.includes(taskId)) {
+      console.log('⚠️ One-time task already completed today:', taskId);
+      return;
+    }
     const task = oneTimeTasks.find(t => t.id === taskId);
-    if (!task) return;
+    if (!task) {
+      console.log('❌ One-time task not found:', taskId);
+      return;
+    }
 
+    console.log('✅ Completing one-time task:', { taskId, points: task.points, taskName: task.text });
     setPoints(prev => ({ ...prev, [taskId]: (prev[taskId] || 0) + task.points }));
-    setTodayDone(prev => [...prev, taskId]);
+    setTodayDone(prev => {
+      const newCompleted = [...prev, taskId];
+      console.log('📝 Updated todayDone (one-time):', newCompleted);
+      return newCompleted;
+    });
   };
 
   // 単発タスク削除
