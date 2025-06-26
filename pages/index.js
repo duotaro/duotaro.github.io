@@ -58,6 +58,11 @@ export default function Home() {
   const [expandedSection, setExpandedSection] = useState({ goalId: null, type: null });
   const [editingGoal, setEditingGoal] = useState(null);
   const [showSelfTalkForm, setShowSelfTalkForm] = useState(false);
+  const [showJsonRestore, setShowJsonRestore] = useState(false);
+  const [jsonRestoreData, setJsonRestoreData] = useState("");
+  const [showIndividualRestore, setShowIndividualRestore] = useState(false);
+  const [individualRestoreField, setIndividualRestoreField] = useState("");
+  const [individualRestoreData, setIndividualRestoreData] = useState("");
 
   // ランダムセルフトークを取得
   const getRandomSelfTalk = () => {
@@ -283,6 +288,154 @@ export default function Home() {
     } catch (error) {
       console.error('復元エラー:', error);
       alert('❌ 復元に失敗しました: ' + error.message);
+    }
+  };
+
+  // JSON形式での全データ復元
+  const handleJsonRestore = async () => {
+    if (!effectiveUserId) {
+      alert('ユーザーIDが見つかりません');
+      return;
+    }
+
+    if (!jsonRestoreData.trim()) {
+      alert('復元データを入力してください');
+      return;
+    }
+
+    try {
+      const restoreData = JSON.parse(jsonRestoreData);
+      
+      const confirmed = window.confirm(
+        `以下のフィールドを復元します：\n${Object.keys(restoreData).join(', ')}\n\n現在のデータは上書きされます。続行しますか？`
+      );
+
+      if (!confirmed) return;
+
+      // Firestoreに書き込み
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const { db } = await import('../lib/firebase');
+      
+      const userDocRef = doc(db, 'habitData', effectiveUserId);
+      await updateDoc(userDocRef, restoreData);
+      
+      // ローカル状態も更新
+      Object.keys(restoreData).forEach(field => {
+        switch(field) {
+          case 'points':
+            habitData.setPoints(restoreData[field]);
+            break;
+          case 'goals':
+            habitData.setGoals(restoreData[field]);
+            break;
+          case 'selfTalkMessages':
+            habitData.setSelfTalkMessages(restoreData[field]);
+            break;
+          case 'oneTimeTasks':
+            habitData.setOneTimeTasks(restoreData[field]);
+            break;
+          case 'rewardSetting':
+            habitData.setRewardSetting(restoreData[field]);
+            break;
+          default:
+            console.log(`Unknown field: ${field}`);
+        }
+      });
+      
+      alert(`✅ データが正常に復元されました！\n復元フィールド: ${Object.keys(restoreData).join(', ')}`);
+      console.log('復元されたデータ:', restoreData);
+      setShowJsonRestore(false);
+      setJsonRestoreData("");
+      
+    } catch (error) {
+      console.error('JSON復元エラー:', error);
+      alert('❌ JSON復元に失敗しました: ' + error.message);
+    }
+  };
+
+  // 個別フィールド復元を開始
+  const handleIndividualRestore = (fieldName) => {
+    setIndividualRestoreField(fieldName);
+    setIndividualRestoreData("");
+    setShowIndividualRestore(true);
+  };
+
+  // 個別フィールド復元を実行
+  const handleIndividualRestoreExecute = async () => {
+    if (!effectiveUserId) {
+      alert('ユーザーIDが見つかりません');
+      return;
+    }
+
+    if (!individualRestoreData.trim()) {
+      alert('復元データを入力してください');
+      return;
+    }
+
+    try {
+      const restoreData = JSON.parse(individualRestoreData);
+      
+      const confirmed = window.confirm(
+        `${individualRestoreField} フィールドを復元します。\n\n現在のデータは上書きされます。続行しますか？`
+      );
+
+      if (!confirmed) return;
+
+      // Firestoreに書き込み
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const { db } = await import('../lib/firebase');
+      
+      const userDocRef = doc(db, 'habitData', effectiveUserId);
+      await updateDoc(userDocRef, { [individualRestoreField]: restoreData });
+      
+      // ローカル状態も更新
+      switch(individualRestoreField) {
+        case 'points':
+          habitData.setPoints(restoreData);
+          break;
+        case 'goals':
+          habitData.setGoals(restoreData);
+          break;
+        case 'selfTalkMessages':
+          habitData.setSelfTalkMessages(restoreData);
+          break;
+        case 'oneTimeTasks':
+          habitData.setOneTimeTasks(restoreData);
+          break;
+        case 'rewardSetting':
+          habitData.setRewardSetting(restoreData);
+          break;
+        default:
+          console.log(`Unknown field: ${individualRestoreField}`);
+      }
+      
+      alert(`✅ ${individualRestoreField} が正常に復元されました！`);
+      console.log(`復元されたデータ (${individualRestoreField}):`, restoreData);
+      setShowIndividualRestore(false);
+      setIndividualRestoreData("");
+      setIndividualRestoreField("");
+      
+    } catch (error) {
+      console.error(`${individualRestoreField} 復元エラー:`, error);
+      alert(`❌ ${individualRestoreField} 復元に失敗しました: ` + error.message);
+    }
+  };
+
+  // フィールド別のプレースホルダーを取得
+  const getPlaceholderForField = (fieldName) => {
+    switch(fieldName) {
+      case 'points':
+        return `例:\n{\n  "daily-reflection": 19,\n  "future-tech-study": 17,\n  "meal-record": 22\n}`;
+      case 'goals':
+        return `例:\n[\n  {\n    "id": "goal1",\n    "title": "目標タイトル",\n    "description": "説明",\n    "progress": 50\n  }\n]`;
+      case 'selfTalkMessages':
+        return `例:\n[\n  "今日もがんばろう！",\n  "一歩ずつ前進している",\n  "成長し続けている"\n]`;
+      case 'oneTimeTasks':
+        return `例:\n[\n  {\n    "id": "task1",\n    "text": "タスク名",\n    "points": 5\n  }\n]`;
+      case 'rewardSetting':
+        return `例:\n"100ptでラーメンを食べてOK"`;
+      default:
+        return 'JSONデータを入力してください';
     }
   };
 
@@ -585,14 +738,67 @@ export default function Home() {
                 緊急復元
               </h2>
               <p className="text-red-200 text-sm mb-4">
-                ⚠️ 本番環境のポイントデータが失われた場合の一時的な復元機能です
+                ⚠️ 本番環境のデータが失われた場合の一時的な復元機能です
               </p>
-              <button
-                onClick={handleRestorePoints}
-                className="w-full py-3 bg-gradient-to-r from-red-400 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
-              >
-                🔧 ポイントデータを復元
-              </button>
+              
+              <div className="space-y-4">
+                {/* 一括復元 */}
+                <div className="space-y-2">
+                  <h3 className="text-red-200 font-medium text-sm">一括復元</h3>
+                  <div className="space-y-2">
+                    <button
+                      onClick={handleRestorePoints}
+                      className="w-full py-3 bg-gradient-to-r from-red-400 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
+                    >
+                      🔧 ポイントデータを復元
+                    </button>
+                    
+                    <button
+                      onClick={() => setShowJsonRestore(true)}
+                      className="w-full py-3 bg-gradient-to-r from-blue-400 to-purple-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
+                    >
+                      📝 JSON形式で全データ復元
+                    </button>
+                  </div>
+                </div>
+
+                {/* 個別復元 */}
+                <div className="space-y-2">
+                  <h3 className="text-red-200 font-medium text-sm">個別復元</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleIndividualRestore('points')}
+                      className="py-2 px-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all hover:scale-105"
+                    >
+                      📊 ポイント
+                    </button>
+                    <button
+                      onClick={() => handleIndividualRestore('goals')}
+                      className="py-2 px-3 bg-gradient-to-r from-green-400 to-emerald-400 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all hover:scale-105"
+                    >
+                      🎯 目標
+                    </button>
+                    <button
+                      onClick={() => handleIndividualRestore('selfTalkMessages')}
+                      className="py-2 px-3 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all hover:scale-105"
+                    >
+                      💭 セルフトーク
+                    </button>
+                    <button
+                      onClick={() => handleIndividualRestore('oneTimeTasks')}
+                      className="py-2 px-3 bg-gradient-to-r from-blue-400 to-cyan-400 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all hover:scale-105"
+                    >
+                      ⚡ 単発タスク
+                    </button>
+                    <button
+                      onClick={() => handleIndividualRestore('rewardSetting')}
+                      className="py-2 px-3 bg-gradient-to-r from-pink-400 to-red-400 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all hover:scale-105"
+                    >
+                      🎁 ご褒美設定
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* その他の設定 */}
@@ -639,6 +845,111 @@ export default function Home() {
             onClose={() => setShowSelfTalkForm(false)}
             onAdd={addSelfTalkMessage}
           />
+        )}
+
+        {/* JSON復元モーダル */}
+        {showJsonRestore && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <h2 className="text-white font-semibold text-xl mb-4 flex items-center">
+                <div className="w-4 h-4 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3"></div>
+                JSON形式でデータ復元
+              </h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-blue-200 text-sm font-medium mb-2">
+                    復元データ (JSON形式)
+                  </label>
+                  <textarea
+                    value={jsonRestoreData}
+                    onChange={(e) => setJsonRestoreData(e.target.value)}
+                    placeholder={`例:\n{\n  "points": {"task1": 10, "task2": 20},\n  "goals": [...],\n  "selfTalkMessages": [...]\n}`}
+                    className="w-full h-64 p-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono text-sm"
+                    rows={12}
+                  />
+                </div>
+                
+                <div className="bg-yellow-500/10 rounded-xl p-3 border border-yellow-400/20">
+                  <p className="text-yellow-200 text-xs">
+                    ⚠️ 対応フィールド: points, goals, selfTalkMessages, oneTimeTasks, rewardSetting<br/>
+                    💡 有効なJSONオブジェクトを入力してください
+                  </p>
+                </div>
+                
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleJsonRestore}
+                    className="flex-1 py-3 bg-gradient-to-r from-blue-400 to-purple-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
+                  >
+                    🔧 復元実行
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowJsonRestore(false);
+                      setJsonRestoreData("");
+                    }}
+                    className="flex-1 py-3 bg-white/10 text-white rounded-xl font-semibold hover:bg-white/20 transition-all"
+                  >
+                    キャンセル
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 個別復元モーダル */}
+        {showIndividualRestore && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <h2 className="text-white font-semibold text-xl mb-4 flex items-center">
+                <div className="w-4 h-4 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mr-3"></div>
+                {individualRestoreField} データ復元
+              </h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-green-200 text-sm font-medium mb-2">
+                    {individualRestoreField} データ (JSON形式)
+                  </label>
+                  <textarea
+                    value={individualRestoreData}
+                    onChange={(e) => setIndividualRestoreData(e.target.value)}
+                    placeholder={getPlaceholderForField(individualRestoreField)}
+                    className="w-full h-64 p-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 font-mono text-sm"
+                    rows={12}
+                  />
+                </div>
+                
+                <div className="bg-yellow-500/10 rounded-xl p-3 border border-yellow-400/20">
+                  <p className="text-yellow-200 text-xs">
+                    💡 {individualRestoreField} フィールドのみが復元されます<br/>
+                    ⚠️ 有効なJSONデータを入力してください
+                  </p>
+                </div>
+                
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleIndividualRestoreExecute}
+                    className="flex-1 py-3 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
+                  >
+                    🔧 {individualRestoreField} 復元
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowIndividualRestore(false);
+                      setIndividualRestoreData("");
+                      setIndividualRestoreField("");
+                    }}
+                    className="flex-1 py-3 bg-white/10 text-white rounded-xl font-semibold hover:bg-white/20 transition-all"
+                  >
+                    キャンセル
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
