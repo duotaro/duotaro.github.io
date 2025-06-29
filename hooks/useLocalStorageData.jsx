@@ -44,6 +44,30 @@ export const useLocalStorageData = () => {
     }
   };
 
+  // 壊れたJSON文字列をクリーンアップする関数
+  const cleanupCorruptedJsonString = (str) => {
+    if (typeof str !== 'string') return str;
+    
+    // 二重エンコードされた文字列を修正
+    let cleaned = str;
+    
+    // 先頭と末尾の不要な引用符を削除
+    while (cleaned.startsWith('"') && cleaned.endsWith('"') && cleaned.length > 2) {
+      try {
+        const unescaped = JSON.parse(cleaned);
+        if (typeof unescaped === 'string') {
+          cleaned = unescaped;
+        } else {
+          break;
+        }
+      } catch (error) {
+        break;
+      }
+    }
+    
+    return cleaned;
+  };
+
   // LocalStorageからのデータ読み込み
   const loadDataFromLocalStorage = () => {
     if (typeof window !== 'undefined') {
@@ -60,7 +84,15 @@ export const useLocalStorageData = () => {
       setOneTimeTasks(storedOneTimeTasks);
       
       if (storedRewardSetting) {
-        setRewardSetting(storedRewardSetting);
+        // 壊れたJSON文字列をクリーンアップしてから設定
+        const cleanedRewardSetting = cleanupCorruptedJsonString(storedRewardSetting);
+        setRewardSetting(cleanedRewardSetting);
+        
+        // クリーンアップした値が元の値と異なる場合、修正された値で再保存
+        if (cleanedRewardSetting !== storedRewardSetting) {
+          console.log('🔧 Cleaning up corrupted rewardSetting:', storedRewardSetting, '→', cleanedRewardSetting);
+          localStorage.setItem("habitRewardSetting", JSON.stringify(cleanedRewardSetting));
+        }
       }
       
       if (storedGoals) {
