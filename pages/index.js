@@ -356,7 +356,38 @@ export default function Home() {
           habitData.setSelfTalkMessages(restoreData);
           break;
         case 'oneTimeTasks':
-          habitData.setOneTimeTasks(restoreData);
+          // 単発タスクのデータバリデーション
+          if (!Array.isArray(restoreData)) {
+            throw new Error('単発タスクのデータは配列である必要があります');
+          }
+          
+          const validatedOneTimeTasks = restoreData.map((task, index) => {
+            if (!task || typeof task !== 'object') {
+              throw new Error(`単発タスク ${index + 1} は有効なオブジェクトである必要があります`);
+            }
+            if (!task.id || typeof task.id !== 'string') {
+              throw new Error(`単発タスク ${index + 1} には有効なid（文字列）が必要です`);
+            }
+            if (!task.text || typeof task.text !== 'string') {
+              throw new Error(`単発タスク ${index + 1} には有効なtext（文字列）が必要です`);
+            }
+            if (typeof task.points !== 'number' || task.points < 0) {
+              throw new Error(`単発タスク ${index + 1} には有効なpoints（0以上の数値）が必要です`);
+            }
+            if (typeof task.completed !== 'boolean') {
+              throw new Error(`単発タスク ${index + 1} には有効なcompleted（true/false）が必要です`);
+            }
+            return {
+              id: task.id,
+              text: task.text,
+              points: task.points,
+              completed: task.completed
+            };
+          });
+          
+          habitData.setOneTimeTasks(validatedOneTimeTasks);
+          // LocalStorageにも保存して即座に同期
+          localStorage.setItem("habitOneTimeTasks", JSON.stringify(validatedOneTimeTasks));
           break;
         case 'rewardSetting':
           habitData.setRewardSetting(restoreData);
@@ -387,7 +418,7 @@ export default function Home() {
       case 'selfTalkMessages':
         return `例:\n[\n  "今日もがんばろう！",\n  "一歩ずつ前進している",\n  "成長し続けている"\n]`;
       case 'oneTimeTasks':
-        return `例:\n[\n  {\n    "id": "task1",\n    "text": "タスク名",\n    "points": 5\n  }\n]`;
+        return `例:\n[\n  {\n    "id": "task1",\n    "text": "タスク名",\n    "points": 5,\n    "completed": false\n  }\n]`;
       case 'rewardSetting':
         return `例:\n"100ptでラーメンを食べてOK"`;
       default:
