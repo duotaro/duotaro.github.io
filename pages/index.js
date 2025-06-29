@@ -5,10 +5,8 @@ import { TASKS, CATEGORY_COLORS } from '../const/habitConstants';
 import { DEFAULT_SELF_TALK } from '../const/selfTalkConstants';
 
 // Import hooks
-import { useFirebaseData } from '../hooks/useFirebaseData';
-import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
+import { useLocalStorageData } from '../hooks/useLocalStorageData';
 import { useTaskLogic } from '../hooks/useTaskLogic';
-import { useUserAuth } from '../hooks/useUserAuth';
 
 // Import components
 import LoadingScreen from '../components/habit/LoadingScreen';
@@ -25,18 +23,11 @@ import SelfTalkSection from '../components/habit/SelfTalkSection';
 import SelfTalkModal from '../components/habit/SelfTalkModal';
 import TemplateSection from '../components/habit/TemplateSection';
 import BackupRestoreSection from '../components/habit/BackupRestoreSection';
+import CloudSyncSection from '../components/habit/CloudSyncSection';
 
 export default function Home() {
-  // Hook imports
-  const auth = useFirebaseAuth();
-  
-  // 実際に使用するユーザーIDを決定（Firebaseユーザーのみ）
-  const effectiveUserId = auth.user?.uid;
-  
-  // ユーザー認証チェック（制限撤廃済み）
-  const userAuth = useUserAuth(effectiveUserId, false, auth.user?.uid);
-  
-  const habitData = useFirebaseData(effectiveUserId);
+  // LocalStorageメインのデータ管理
+  const habitData = useLocalStorageData();
   const taskLogic = useTaskLogic(
     habitData.todayDone, 
     habitData.setPoints, 
@@ -48,8 +39,6 @@ export default function Home() {
   // Local state
   const [currentView, setCurrentView] = useState("tasks");
   const [isEditingReward, setIsEditingReward] = useState(false);
-  const [showMigration, setShowMigration] = useState(false);
-  const [migrationCompleted, setMigrationCompleted] = useState(false);
   const [tempRewardText, setTempRewardText] = useState("");
   const [showAddTask, setShowAddTask] = useState(false);
   const [currentSelfTalk, setCurrentSelfTalk] = useState("");
@@ -195,39 +184,7 @@ export default function Home() {
 
   const shareText = generateShareText();
 
-  // 移行チェックのuseEffect
-  useEffect(() => {
-    if (auth.isAuthenticated && effectiveUserId && habitData.isLoaded && !migrationCompleted) {
-      const migrationKey = `migration-completed-${effectiveUserId}`;
-      const completed = localStorage.getItem(migrationKey);
-      
-      if (!completed) {
-        setShowMigration(true);
-      } else {
-        setMigrationCompleted(true);
-      }
-    }
-  }, [auth.isAuthenticated, effectiveUserId, habitData.isLoaded, migrationCompleted]);
 
-  const handleMigrationComplete = () => {
-    if (effectiveUserId) {
-      const migrationKey = `migration-completed-${effectiveUserId}`;
-      localStorage.setItem(migrationKey, 'true');
-    }
-    setShowMigration(false);
-    setMigrationCompleted(true);
-    // データを再読み込み
-    window.location.reload();
-  };
-
-  const handleMigrationSkip = () => {
-    if (effectiveUserId) {
-      const migrationKey = `migration-completed-${effectiveUserId}`;
-      localStorage.setItem(migrationKey, 'true');
-    }
-    setShowMigration(false);
-    setMigrationCompleted(true);
-  };
 
   // 緊急復元機能
   const handleRestorePoints = async () => {
@@ -438,37 +395,16 @@ export default function Home() {
     }
   };
 
-  if (auth.loading || !habitData.isLoaded || userAuth.isCheckingAuth) {
+  if (!habitData.isLoaded) {
     return <LoadingScreen />;
   }
 
-  if (!auth.isAuthenticated) {
-    return <AuthLogin auth={auth} />;
-  }
-
-  // アクセス制限を撤廃したため、この条件は不要
-
-  if (showMigration) {
-    return (
-      <DataMigrationModal
-        userId={effectiveUserId}
-        onComplete={handleMigrationComplete}
-        onSkip={handleMigrationSkip}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
       <div className="max-w-md lg:max-w-2xl xl:max-w-4xl mx-auto px-4 py-6">
         {/* ヘッダー */}
         <div className="text-center mb-6 pt-4 relative">
-          <button
-            onClick={auth.handleLogout}
-            className="absolute top-0 right-0 text-purple-200 hover:text-white transition-colors text-sm bg-white/10 px-3 py-1 rounded-full border border-white/20 hover:bg-white/20"
-          >
-            🚪 ログアウト
-          </button>
           <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-2xl">
             ✨
           </div>
@@ -728,7 +664,8 @@ export default function Home() {
 
         {currentView === "settings" && (
           <div className="space-y-6">
-            <BackupRestoreSection userId={effectiveUserId} />
+            <CloudSyncSection />
+            <BackupRestoreSection />
             
             {/* 緊急復元セクション */}
             <div className="bg-red-500/10 backdrop-blur-xl rounded-2xl p-5 border border-red-400/20 shadow-xl">
@@ -812,16 +749,12 @@ export default function Home() {
                   <span className="text-white">v2.0.0 (Firebase統合版)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-purple-200">データ保存</span>
-                  <span className="text-white">{auth.user ? 'Firebase Firestore' : 'LocalStorage'}</span>
+                  <span className="text-purple-200">データ保存方式</span>
+                  <span className="text-white text-xs">LocalStorage</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-purple-200">現在のユーザーID</span>
-                  <span className="text-white text-xs">{effectiveUserId || '未認証'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-purple-200">認証方式</span>
-                  <span className="text-white text-xs">Firebase匿名認証</span>
+                  <span className="text-purple-200">クラウド同期</span>
+                  <span className="text-white text-xs">設定画面で利用可能</span>
                 </div>
               </div>
             </div>
