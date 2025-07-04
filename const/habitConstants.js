@@ -38,6 +38,15 @@ export const TASKS = [
     days: [2, 4], // 火曜・木曜
     time: "Orderflow学習後"
   },
+  { 
+    id: "history-sns-post", 
+    category: "content",
+    categoryLabel: "✍️ コンテンツ作成",
+    label: "歴史に関する情報をSNSに投稿", 
+    points: 3,
+    days: [1, 3, 5], // 月水金
+    time: "Orderflow学習後"
+  },
   // 学習
   { 
     id: "future-tech-study", 
@@ -53,9 +62,9 @@ export const TASKS = [
     id: "pomodoro-pushups", 
     category: "training",
     categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "腕立て（ポモドーロ）", 
+    label: "プッシュアップ（ポモドーロ）", 
     points: 2,
-    days: [1, 3, 5], // 月水金
+    days: [1, 3], // 月水
     time: "各25分作業後の5分休憩中"
   },
   { 
@@ -90,10 +99,10 @@ export const TASKS = [
     id: "night-pushups", 
     category: "training",
     categoryLabel: "🏋️‍♂️ トレーニング",
-    label: "腕立て（夜）", 
+    label: "プッシュアップ（夜）", 
     points: 2,
-    days: [1, 3, 5], // 月水金
-    time: "子供が寝たらすぐ"
+    days: [6], // 土
+    time: "各25分作業後の5分休憩中"
   },
   { 
     id: "night-hiit", 
@@ -120,6 +129,61 @@ export const TASKS = [
     label: "肩・背中ストレッチ（夜）", 
     points: 1,
     days: [1, 2, 3, 4, 5, 6, 7], // 毎日
+    time: "子供が寝たらすぐ"
+  },
+  // ダンベル導入期追加メニュー
+  { 
+    id: "dumbbell-press-phase1", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "ダンベルプレス（2 x 12-15）", 
+    points: 6,
+    days: [1], // 月曜日
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "dumbbell-french-press-phase1", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "ダンベルフレンチプレス（2 x 12-15）", 
+    points: 6,
+    days: [1], // 月曜日
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "dumbbell-rowing-phase1", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "ダンベルローイング（2 x 12-15）", 
+    points: 6,
+    days: [3], // 水曜日
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "dumbbell-curl-phase1", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "ダンベルカール（2 x 12-15）", 
+    points: 6,
+    days: [3], // 水曜日
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "dumbbell-squat-phase1", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "ダンベルスクワット（2 x 12-15）", 
+    points: 6,
+    days: [5], // 金曜日
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "dumbbell-shoulder-press-phase1", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "ダンベルショルダープレス（2 x 12-15）", 
+    points: 6,
+    days: [5], // 金曜日
     time: "子供が寝たらすぐ"
   },
   { 
