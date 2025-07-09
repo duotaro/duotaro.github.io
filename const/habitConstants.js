@@ -7,7 +7,7 @@ export const TASKS = [
     categoryLabel: "🪙 投資",
     label: "OFトレード学習", 
     points: 5,
-    days: [1, 2, 3, 4, 5], // 平日毎日
+    days: [1, 3, 5], // 月、水、金
     time: "13時から"
   },
   { 
@@ -16,7 +16,7 @@ export const TASKS = [
     categoryLabel: "🪙 投資",
     label: "DeFi運用見直し", 
     points: 5,
-    days: [1], // 月曜
+    days: [1], // 月
     time: "OFトレード学習後"
   },
   // コンテンツ作成
@@ -26,26 +26,44 @@ export const TASKS = [
     categoryLabel: "✍️ コンテンツ作成",
     label: "OF学習noteまとめ", 
     points: 5,
-    days: [1], // 月曜
+    days: [1], // 月
     time: "DeFi運用見直し後"
   },
   { 
     id: "sns-post", 
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
-    label: "note要点をSNSに投稿", 
+    label: "[OF]note要点をSNSに投稿", 
     points: 3,
-    days: [2, 4], // 火曜・木曜
+    days: [3], // 水
     time: "Orderflow学習後"
   },
   { 
-    id: "history-sns-post", 
+    id: "bukei-onepoint-post", 
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
-    label: "歴史に関する情報をSNSに投稿", 
+    label: "一言兵法 投稿", 
     points: 3,
-    days: [1, 3, 5], // 月水金
-    time: "Orderflow学習後"
+    days: [1, 2, 3, 4, 5, 6, 7], // 毎日
+    time: "保育園に送迎して帰宅したら(8-10時)"
+  },
+  { 
+    id: "bukei-news-post", 
+    category: "content",
+    categoryLabel: "✍️ コンテンツ作成",
+    label: "ニュース兵法読み解き 投稿", 
+    points: 3,
+    days: [1, 2, 3, 4, 5, 6, 7], // 毎日
+    time: "12時までのタスクが終わったら"
+  },
+  { 
+    id: "bukei-news-post", 
+    category: "content",
+    categoryLabel: "✍️ コンテンツ作成",
+    label: "ブログ関連 投稿", 
+    points: 3,
+    days: [1, 2, 3, 4, 5, 6, 7], // 毎日
+    time: "子供と寝る前(予約投稿でもOK)"
   },
   // 学習
   { 
@@ -73,7 +91,7 @@ export const TASKS = [
     categoryLabel: "🏋️‍♂️ トレーニング",
     label: "スクワット（ポモドーロ）", 
     points: 1,
-    days: [1, 2, 3, 4, 5], // 平日毎日
+    days: [1, 2, 3, 4], // 月火水木
     time: "各25分作業後の5分休憩中"
   },
   { 
@@ -105,12 +123,30 @@ export const TASKS = [
     time: "各25分作業後の5分休憩中"
   },
   { 
+    id: "dumbbell-rowing-phase1-sat", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "ダンベルローイング（2 x 12-15）", 
+    points: 6,
+    days: [6], // 土
+    time: "子供が寝たらすぐ"
+  },
+  { 
+    id: "dumbbell-curl-phase1-sat", 
+    category: "training",
+    categoryLabel: "🏋️‍♂️ トレーニング",
+    label: "ダンベルカール（2 x 12-15）", 
+    points: 6,
+    days: [6], // 土
+    time: "子供が寝たらすぐ"
+  },
+  { 
     id: "night-hiit", 
     category: "training",
     categoryLabel: "🏋️‍♂️ トレーニング",
     label: "HIIT（夜）", 
     points: 2,
-    days: [2, 4, 6], // 火木土
+    days: [2, 4], // 火木
     time: "子供が寝たらすぐ"
   },
   { 
@@ -119,7 +155,7 @@ export const TASKS = [
     categoryLabel: "🏋️‍♂️ トレーニング",
     label: "腹筋（夜）", 
     points: 1,
-    days: [1, 2, 3, 4, 5, 6, 7], // 毎日
+    days: [1, 2, 3, 4, 5, 6], // 日曜以外
     time: "子供が寝たらすぐ"
   },
   { 

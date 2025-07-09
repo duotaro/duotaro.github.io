@@ -25,6 +25,11 @@
       "Bash(node:*)",
       "Bash(python3:*)"
     ],
-    "deny": []
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf ~/*)",
+      "Bash(rm -rf /*)"
+    ]
   }
 }
