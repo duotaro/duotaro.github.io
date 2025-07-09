@@ -57,7 +57,7 @@ export const TASKS = [
     time: "12時までのタスクが終わったら"
   },
   { 
-    id: "bukei-news-post", 
+    id: "bukei-blog-post", 
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
     label: "ブログ関連 投稿", 
