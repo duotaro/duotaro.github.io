@@ -24,6 +24,7 @@ import SelfTalkModal from '../components/habit/SelfTalkModal';
 import TemplateSection from '../components/habit/TemplateSection';
 import BackupRestoreSection from '../components/habit/BackupRestoreSection';
 import CloudSyncSection from '../components/habit/CloudSyncSection';
+import ScheduleView from '../components/habit/ScheduleView';
 
 export default function Home() {
   // LocalStorageメインのデータ管理
@@ -51,6 +52,7 @@ export default function Home() {
   const [showIndividualRestore, setShowIndividualRestore] = useState(false);
   const [individualRestoreField, setIndividualRestoreField] = useState("");
   const [individualRestoreData, setIndividualRestoreData] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // ランダムセルフトークを取得
   const getRandomSelfTalk = () => {
@@ -436,6 +438,43 @@ export default function Home() {
       <div className="max-w-md lg:max-w-2xl xl:max-w-4xl mx-auto px-4 py-6">
         {/* ヘッダー */}
         <div className="text-center mb-6 pt-4 relative">
+          {/* ハンバーガーメニュー */}
+          <div className="absolute top-4 right-0">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white text-2xl p-2 rounded-lg hover:bg-white/10 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+            </button>
+            {isMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur-xl border border-white/20 rounded-lg shadow-xl z-20">
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentView("templates");
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/20 transition-colors"
+                >
+                  <span className="text-lg">📝</span>
+                  <span>メモ</span>
+                </a>
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentView("settings");
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/20 transition-colors"
+                >
+                  <span className="text-lg">⚙️</span>
+                  <span>設定</span>
+                </a>
+              </div>
+            )}
+          </div>
+
           <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-2xl">
             ✨
           </div>
@@ -451,8 +490,7 @@ export default function Home() {
             { key: "tasks", label: "📋 タスク", icon: "📋" },
             { key: "goals", label: "🎯 目標", icon: "🎯" },
             { key: "selftalk", label: "💪 マインド", icon: "💪" },
-            { key: "templates", label: "📝 メモ", icon: "📝"},
-            { key: "settings", label: "⚙️ 設定", icon: "⚙️"}
+            { key: "schedule", label: "🗓️ スケジュール", icon: "" }
           ].map(({ key, label, icon }) => (
             <button
               key={key}
@@ -690,6 +728,8 @@ export default function Home() {
             dayCount={dayCount}
           />
         )}
+
+        {currentView === "schedule" && <ScheduleView />}
 
         {currentView === "templates" && <TemplateSection />}
 

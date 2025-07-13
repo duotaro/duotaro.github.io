@@ -24,7 +24,7 @@ export const TASKS = [
     id: "note-writing", 
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
-    label: "OF学習noteまとめ", 
+    label: "OF学習noteまとめ(noteboolLM)", 
     points: 5,
     days: [1], // 月
     time: "DeFi運用見直し後"
@@ -51,7 +51,7 @@ export const TASKS = [
     id: "bukei-news-post", 
     category: "content",
     categoryLabel: "✍️ コンテンツ作成",
-    label: "ニュース兵法読み解き 投稿", 
+    label: "ニュース兵法読み解き 投稿(noteboolLM)", 
     points: 3,
     days: [1, 2, 3, 4, 5, 6, 7], // 毎日
     time: "12時までのタスクが終わったら"
@@ -65,14 +65,13 @@ export const TASKS = [
     days: [1, 2, 3, 4, 5, 6, 7], // 毎日
     time: "子供と寝る前(予約投稿でもOK)"
   },
-  // 学習
   { 
-    id: "future-tech-study", 
-    category: "learning",
-    categoryLabel: "🧠 学習（先端技術）",
-    label: "先端技術に関する学習", 
-    points: 5,
-    days: [2, 4], // 火曜・木曜
+    id: "article-internal-link", 
+    category: "content",
+    categoryLabel: "✍️ コンテンツ作成",
+    label: "内部リンク化・記事精査・改善・画像追加 1記事/日", 
+    points: 8,
+    days: [1, 2, 3, 4, 5, 6, 7], // 毎日
     time: "SNSに投稿後"
   },
   // トレーニング（ポモドーロ）
