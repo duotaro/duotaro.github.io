@@ -25,6 +25,7 @@ import TemplateSection from '../components/habit/TemplateSection';
 import BackupRestoreSection from '../components/habit/BackupRestoreSection';
 import CloudSyncSection from '../components/habit/CloudSyncSection';
 import ScheduleView from '../components/habit/ScheduleView';
+import MonthlyKPISection from '../components/habit/MonthlyKPISection';
 
 export default function Home() {
   // LocalStorageメインのデータ管理
@@ -53,6 +54,7 @@ export default function Home() {
   const [individualRestoreField, setIndividualRestoreField] = useState("");
   const [individualRestoreData, setIndividualRestoreData] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [goalsSubView, setGoalsSubView] = useState("goals"); // "goals" or "kpi"
 
   // ランダムセルフトークを取得
   const getRandomSelfTalk = () => {
@@ -702,18 +704,50 @@ export default function Home() {
 
         {currentView === "goals" && (
           <div className="space-y-6">
-            <div className="space-y-4">
-              {habitData.goals.map((goal) => (
-                <GoalCard
-                  key={goal.id}
-                  goal={goal}
-                  onEdit={setEditingGoal}
-                  onUpdateProgress={updateGoalProgress}
-                  expandedSection={expandedSection}
-                  onToggleSection={toggleSection}
-                />
-              ))}
+            {/* サブナビゲーション */}
+            <div className="flex bg-white/10 backdrop-blur-xl rounded-xl p-1 border border-white/20">
+              <button
+                onClick={() => setGoalsSubView("goals")}
+                className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
+                  goalsSubView === "goals"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
+                    : "text-purple-200 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                🎯 目標管理
+              </button>
+              <button
+                onClick={() => setGoalsSubView("kpi")}
+                className={`flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
+                  goalsSubView === "kpi"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
+                    : "text-purple-200 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                📊 月次KPI
+              </button>
             </div>
+
+            {/* 目標管理ビュー */}
+            {goalsSubView === "goals" && (
+              <div className="space-y-4">
+                {habitData.goals.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    onEdit={setEditingGoal}
+                    onUpdateProgress={updateGoalProgress}
+                    expandedSection={expandedSection}
+                    onToggleSection={toggleSection}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* KPI管理ビュー */}
+            {goalsSubView === "kpi" && (
+              <MonthlyKPISection />
+            )}
           </div>
         )}
 
