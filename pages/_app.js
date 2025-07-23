@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import React from 'react';
+import { MonthlyKPIProvider } from '../context/MonthlyKPIContext';
 
 // グローバルエラーハンドラー
 if (typeof window !== 'undefined') {
@@ -57,7 +58,9 @@ class ErrorBoundary extends React.Component {
 function MyApp({ Component, pageProps }) {
   return (
     <ErrorBoundary>
-      <Component {...pageProps} />
+      <MonthlyKPIProvider>
+        <Component {...pageProps} />
+      </MonthlyKPIProvider>
     </ErrorBoundary>
   );
 }

@@ -35,6 +35,7 @@ export const useSyncData = () => {
       const storedGoals = JSON.parse(localStorage.getItem("habitGoals") || "null");
       const storedSelfTalk = JSON.parse(localStorage.getItem("habitSelfTalk") || "null");
       const storedOneTimeTasks = JSON.parse(localStorage.getItem("habitOneTimeTasks") || "[]");
+      const storedMonthlyKPIs = JSON.parse(localStorage.getItem("monthlyKPIs") || "{}");
       const today = getTodayString();
 
       // Firestoreに同期データを保存
@@ -45,6 +46,7 @@ export const useSyncData = () => {
         rewardSetting: storedRewardSetting || "100ptでラーメンを食べてOK",
         goals: storedGoals || DEFAULT_GOALS,
         selfTalkMessages: storedSelfTalk || DEFAULT_SELF_TALK,
+        monthlyKPIs: storedMonthlyKPIs,
         completionData: storedCompletion.date === today ? storedCompletion : { date: today, completed: [] },
         lastSyncedAt: new Date().toISOString(),
         syncDirection: 'localStorage_to_firestore'
@@ -109,6 +111,9 @@ export const useSyncData = () => {
       }
       if (data.oneTimeTasks) {
         localStorage.setItem("habitOneTimeTasks", JSON.stringify(data.oneTimeTasks));
+      }
+      if (data.monthlyKPIs) {
+        localStorage.setItem("monthlyKPIs", JSON.stringify(data.monthlyKPIs));
       }
 
       setSyncStatus('✅ FirestoreからLocalStorageへの同期が完了しました。ページをリロードしてください。');
