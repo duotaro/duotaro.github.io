@@ -202,48 +202,9 @@ yarn deploy:production
     
     return [
       {
-        id: 'quality-check',
-        title: '既存記事の質確認',
-        content: `### 既存記事の質があまりにも低い場合
-既存記事がある程度整っている必要がある。
-もし根本的な改修が必要そうな場合は、以下の内容でAIに相談する。
-もしくは、新規生成フローを使う。（新規記事アイデアスクリプトで、既存記事のジャンルや悩みでフィルターする）
-
-#### 悩み設定が適切か
-適切であれば、この悩みに対しての解決策を持っていそうな古典記事を探してもらう。
-適切ではない場合は、もう新規記事として作成する方がいいかも。
-
-#### Why-What-Howの設定
-\`\`\`
-記事を根本的に改善したいです。
-適切なタイトル変更なども考えています。
-悩みは
-{
-  ここに悩みを記述
-}
-
-この悩みを解決できそうな古典記事を以下のファイルから探し出して、その解決策に沿って記事を生成してください。
-・各古典記事が提供できるもの
-history/bukei_shichisyo/docs/article/why_what_how/why_what_how_analysis_result.json
-・カテゴリごとの悩みと解決に使える古典記事マッピング
-history/bukei_shichisyo/docs/article/category
-
-これらの情報から、以下を決定してください。
-・悩みを解決できる教えをしている章（武経七書のいずれかの書物の、いずれかの章）
-・それを使って解決したい悩み（こちらが提供したままでもいいですが、改善できるのであれば改善ください。）
-・解決したい悩みをどのように解決する方法（悩みを解決できる教えに関連するもの）
-\`\`\`
-
-#### Why-What-Howを使って新規記事生成フローへ
-history/bukei_shichisyo/docs/article/create/README.md　
-を参照して新規記事を生成する。
-既存記事を上書きするのか、新規作成して削除かはその時決める`
-      },
-      {
         id: 'revision-execution',
         title: '記事改修実行',
-        content: `### 既存記事の質がある程度保たれている場合
-ここから本来の記事改修フローに入る。
+        content: `
 
 #### AI依頼用プロンプトを修正
 以下の依頼用のプロンプトがある。
@@ -259,6 +220,14 @@ history/bukei_shichisyo/docs/article/update/AI_ARTICLE_REVISION_PROMPT.md
 \`\`\`
 history/bukei_shichisyo/docs/article/update/AI_ARTICLE_REVISION_PROMPT.md
 に要望を記載しました。ご確認の上、作業をお願いします。
+\`\`\``
+      },{
+        id: 'revision-title',
+        title: 'タイトル改修実行',
+        content: `
+\`\`\`
+記事（${displayArticlePath}）のタイトルが history/bukei_shichisyo/docs/article/TITLE_GUIDE.md のガイドラインに則っているか確認してください。
+必要であれば修正してください。
 \`\`\``
       },
       {
@@ -305,19 +274,12 @@ WebP変換
 
   確認作業は不要です。全ての最適化が完了するまで継続してください。
 \`\`\`
-
-#### データ投入
-上のプロンプトでAIがやってくれたら、ここはやらなくていい
-記事マークダウンに以下のような形式でデータ投入
-\`\`\`
-images:
-  hero:
-    src: '/articles/application/liutao/relationships/images/conversation_tension_management_hero.png'
-    alt: '敵人の情は、得て知るべし。'
-    caption: '敵人の情は、得て知るべし。'
-\`\`\`
-
-### 内部リンク化
+`
+      },
+      {
+        id: 'content-brushup-internal-link',
+        title: '内部リンク化',
+        content: `### 内部リンク化
 該当記事に対して、以下のプロンプトで依頼
 \`\`\`
 修正いただいた記事(${displayArticlePath})に対して内部リンク化を実施したいです。現在、リンクが少なすぎる、リンクが多すぎる、無効なリンクがある、リンクがあるべきではないところにリンクがあるなどの問題があります。
@@ -333,19 +295,7 @@ images:
 
 **重要**: YAMLフロントマターの編集時は構造を壊さないよう注意してください。
 \`\`\`
-
-### 関連記事生成
-以下のスクリプトを実行
-\`\`\`
-cd history/bukei_shichisyo/app/scripts/quality
-node updateRelatedArticles.js --execute
-\`\`\`
-
-### 記事生成
-\`\`\`
-cd history/bukei_shichisyo/app/
-yarn articles:generate
-\`\`\``
+`
       },
       {
         id: 'review',
@@ -389,7 +339,7 @@ history/bukei_shichisyo/docs/article/update/classic/CLASSIC_ARTICLE_IMPROVEMENT_
       },
       {
         id: 'content-brushup',
-        title: '記事内容ブラッシュアップ',
+        title: '画像追加',
         content: `### ヒーロー画像追加
 #### Canvaで画像生成
 https://www.canva.com/design/DAGsomAbSJo/A07GpGb2A_lnPz5eXm2Wyg/edit?ui=eyJEIjp7IlAiOnsiQiI6ZmFsc2V9fX0
@@ -431,19 +381,12 @@ WebP変換
 
   確認作業は不要です。全ての最適化が完了するまで継続してください。
 \`\`\`
-
-#### データ投入
-上のプロンプトでAIがやってくれたら、ここはやらなくていい
-記事マークダウンに以下のような形式でデータ投入
-\`\`\`
-images:
-  hero:
-    src: '/articles/application/liutao/relationships/images/conversation_tension_management_hero.png'
-    alt: '敵人の情は、得て知るべし。'
-    caption: '敵人の情は、得て知るべし。'
-\`\`\`
-
-### 内部リンク化
+`
+      },
+      {
+        id: 'content-brushup-internal-link',
+        title: '内部リンク化',
+        content: `内部リンク化
 該当記事に対して、以下のプロンプトで依頼
 \`\`\`
 修正いただいた記事(${displayArticlePath})に対して内部リンク化を実施したいです。現在、リンクが少なすぎる、リンクが多すぎる、無効なリンクがある、リンクがあるべきではないところにリンクがあるなどの問題があります。
@@ -460,35 +403,7 @@ images:
 **重要**: YAMLフロントマターの編集時は構造を壊さないよう注意してください。
 \`\`\`
 
-### 関連記事生成
-以下のスクリプトを実行
-\`\`\`
-cd history/bukei_shichisyo/app/scripts/quality
-node updateRelatedArticles.js --execute
-\`\`\`
-
-### 記事生成
-\`\`\`
-cd history/bukei_shichisyo/app/
-yarn articles:generate
-\`\`\``
-      },
-      {
-        id: 'review',
-        title: 'レビュー',
-        content: `\`\`\`
-cd history/bukei_shichisyo/app/
-yarn dev
-\`\`\`
-検証環境にて、画像表示、内部リンク、表示項目、内容のレビューを行う。`
-      },
-      {
-        id: 'release',
-        title: 'リリース',
-        content: `\`\`\`
-cd history/bukei_shichisyo/app/
-yarn deploy:production
-\`\`\``
+`
       }
     ];
   };
