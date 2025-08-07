@@ -29,18 +29,18 @@ export const DEFAULT_GOALS = [
   {
     "id": "social-influence",
     "title": "影響力の確立",
-    "description": "SNSで計40万人フォロワーを達成し、経済的成功と社会貢献の基盤を築く",
+    "description": "SNSで計25万人フォロワーを達成し、経済的成功と社会貢献の基盤を築く",
     "targetDate": "2028-12-31",
     "category": "social",
     "progress": 0,
     "milestones": [
       { "title": "SNS運用設計・毎日発信習慣化(2025年9月)", "target": 5, "completed": false },
-      { "title": "フォロワー計1万人達成(2025年12月)", "target": 10, "completed": false },
-      { "title": "計5万人達成(2026年6月)", "target": 25, "completed": false },
-      { "title": "計10万人達成(2026年12月)", "target": 40, "completed": false },
-      { "title": "計20万人達成(2027年12月)", "target": 60, "completed": false },
-      { "title": "計30万人達成(2028年6月)", "target": 80, "completed": false },
-      { "title": "計40万人達成(2028年12月)", "target": 100, "completed": false }
+      { "title": "フォロワー計3000人達成(2025年12月)", "target": 10, "completed": false },
+      { "title": "計1万人達成(2026年6月)", "target": 25, "completed": false },
+      { "title": "計2.5万人達成(2026年12月)", "target": 40, "completed": false },
+      { "title": "計10万人達成(2027年12月)", "target": 60, "completed": false },
+      { "title": "計20万人達成(2028年6月)", "target": 80, "completed": false },
+      { "title": "計25万人達成(2028年12月)", "target": 100, "completed": false }
     ],
     "okr": {
       "objective": "SNS運用を戦略的に設計し、毎日発信を無理なく継続できる状態をつくる",
